@@ -8,8 +8,10 @@ import {
   UpdateDateColumn,
   ManyToOne,
   OneToMany,
+  Entity,
 } from 'typeorm';
 
+@Entity()
 export class Wish {
   @PrimaryGeneratedColumn()
   id: number;
@@ -42,15 +44,12 @@ export class Wish {
   raised: number;
 
   @Column()
-  @IsUrl()
-  @ManyToOne(() => User, (user) => user.wishes)
-  owner: User;
-
-  @Column()
   @Length(1, 1024)
   description: string;
 
-  @Column()
+  @ManyToOne(() => User, (user) => user.wishes)
+  owner: User;
+
   @OneToMany(() => Offer, (offer) => offer.item)
   offers: [];
 

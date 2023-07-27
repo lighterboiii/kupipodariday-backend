@@ -1,13 +1,18 @@
 import { IsDate, Max, Length, IsUrl } from 'class-validator';
 import { User } from 'src/users/entity/user.entity';
+import { Wish } from 'src/wishes/entity/wish.entity';
 import {
+  Entity,
   Column,
   PrimaryGeneratedColumn,
   CreateDateColumn,
   UpdateDateColumn,
   ManyToOne,
+  ManyToMany,
+  JoinTable,
 } from 'typeorm';
 
+@Entity()
 export class WishList {
   @PrimaryGeneratedColumn()
   id: number;
@@ -32,10 +37,10 @@ export class WishList {
   @IsUrl()
   image: string;
 
-  @Column()
-  items: [];
+  @ManyToMany(() => Wish)
+  @JoinTable()
+  items: Wish[];
 
-  @Column()
   @ManyToOne(() => User, (user) => user.wishlists)
   user: User;
 }

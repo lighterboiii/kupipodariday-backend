@@ -12,8 +12,8 @@ export class UsersService {
     private readonly usersRepository: Repository<User>,
   ) {}
   // создание пользователя
-  async create(createUserDto: CreateUserDto): Promise<User> {
-    return this.usersRepository.save(
+  async createUser(createUserDto: CreateUserDto): Promise<User> {
+    return await this.usersRepository.save(
       this.usersRepository.create(createUserDto),
     );
   }

@@ -7,7 +7,7 @@ import {
   Max,
 } from 'class-validator';
 
-export class createWishlistDto {
+export class CreateWishlistDto {
   @IsString()
   @Length(2, 30)
   name: string;

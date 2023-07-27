@@ -1,6 +1,7 @@
 import { IsDate, IsEmail, Length } from 'class-validator';
 import { Offer } from 'src/offers/entity/offer.entity';
 import { Wish } from 'src/wishes/entity/wish.entity';
+import { WishList } from 'src/wishlists/entity/wishlist.entity';
 import {
   Entity,
   PrimaryGeneratedColumn,
@@ -8,6 +9,7 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   OneToMany,
+  ManyToOne,
 } from 'typeorm';
 
 @Entity()
@@ -44,6 +46,6 @@ export class User {
   @OneToMany(() => Offer, (offer) => offer.user) // связь с офферами
   offers: Offer[];
 
-  // определить тип связи
-  wishlists: [];
+  @ManyToOne(() => WishList, (wishlist) => wishlist.user) // связь юзера с его вишлистами
+  wishlists: WishList[];
 }
