@@ -1,10 +1,13 @@
 import { IsDate, IsEmail, Length } from 'class-validator';
+import { Offer } from 'src/offers/entity/offer.entity';
+import { Wish } from 'src/wishes/entity/wish.entity';
 import {
   Entity,
   PrimaryGeneratedColumn,
   Column,
   CreateDateColumn,
   UpdateDateColumn,
+  OneToMany,
 } from 'typeorm';
 
 @Entity()
@@ -35,11 +38,11 @@ export class User {
   @IsEmail()
   email: string;
 
-  // определить тип связи
-  wishes: [];
+  @OneToMany(() => Wish, (wish) => wish.owner) // связь с подарками
+  wishes: Wish[];
 
-  // определить тип связи
-  offers: [];
+  @OneToMany(() => Offer, (offer) => offer.user) // связь с офферами
+  offers: Offer[];
 
   // определить тип связи
   wishlists: [];

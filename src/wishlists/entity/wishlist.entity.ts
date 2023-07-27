@@ -1,9 +1,11 @@
 import { IsDate, Max, Length, IsUrl } from 'class-validator';
+import { User } from 'src/users/entity/user.entity';
 import {
   Column,
   PrimaryGeneratedColumn,
   CreateDateColumn,
   UpdateDateColumn,
+  ManyToOne,
 } from 'typeorm';
 
 export class WishList {
@@ -32,4 +34,8 @@ export class WishList {
 
   @Column()
   items: [];
+
+  @Column()
+  @ManyToOne(() => User, (user) => user.wishlists)
+  user: User;
 }

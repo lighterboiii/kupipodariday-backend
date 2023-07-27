@@ -4,8 +4,11 @@ import {
   PrimaryGeneratedColumn,
   CreateDateColumn,
   UpdateDateColumn,
+  ManyToOne,
+  OneToMany,
 } from 'typeorm';
 import { User } from 'src/users/entity/user.entity';
+import { Wish } from 'src/wishes/entity/wish.entity';
 
 export class Offer {
   @PrimaryGeneratedColumn()
@@ -19,9 +22,11 @@ export class Offer {
   @IsDate()
   updatedAt: Date;
 
+  @ManyToOne(() => User, (user) => user.offers)
   user: User;
 
   @Column()
+  @OneToMany(() => Wish, (wish) => wish.offers)
   item: string;
 
   @Column()

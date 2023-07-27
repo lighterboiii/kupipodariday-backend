@@ -1,9 +1,13 @@
 import { IsDate, IsNumber, IsUrl, Length } from 'class-validator';
+import { Offer } from 'src/offers/entity/offer.entity';
+import { User } from 'src/users/entity/user.entity';
 import {
   Column,
   PrimaryGeneratedColumn,
   CreateDateColumn,
   UpdateDateColumn,
+  ManyToOne,
+  OneToMany,
 } from 'typeorm';
 
 export class Wish {
@@ -39,14 +43,15 @@ export class Wish {
 
   @Column()
   @IsUrl()
-  owner: string;
+  @ManyToOne(() => User, (user) => user.wishes)
+  owner: User;
 
   @Column()
   @Length(1, 1024)
   description: string;
 
-  // описать связи
   @Column()
+  @OneToMany(() => Offer, (offer) => offer.item)
   offers: [];
 
   @Column()
