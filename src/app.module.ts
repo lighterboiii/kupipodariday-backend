@@ -19,7 +19,7 @@ import { Offer } from './offers/entity/offer.entity';
       port: 5432,
       username: 'student',
       password: 'student',
-      database: 'nest_project',
+      database: 'kupipodariday',
       entities: [User, Wish, WishList, Offer],
       synchronize: true,
     }),

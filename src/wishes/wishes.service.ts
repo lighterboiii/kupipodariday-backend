@@ -15,12 +15,12 @@ export class WishesService {
     private readonly usersRepository: Repository<User>,
   ) {}
   // создание wish
-  async createWish(createWishDto: CreateWishDto, user: User): Promise<Wish> {
+  async createWish(user: User, createWishDto: CreateWishDto): Promise<Wish> {
     const wish = this.wishesRepository.create({
       ...createWishDto,
       owner: user,
     });
-    return wish;
+    return await this.wishesRepository.save(wish);
   }
   // поиск по айди
   async findOne(id: number) {
@@ -28,6 +28,7 @@ export class WishesService {
       where: { id },
       relations: {
         owner: true,
+        offers: true,
       },
     });
   }
@@ -61,7 +62,7 @@ export class WishesService {
     const user = await this.usersRepository.findOneBy({ id: userId });
 
     if (!wishToCopy) {
-      throw new NotFoundException('Такого желания не существует');
+      throw new NotFoundException('Такого подарка не существует');
     }
 
     if (!user) {
@@ -76,14 +77,30 @@ export class WishesService {
     };
     wishToCopy.copied += 1;
 
-    const newWish = await this.createWish(copiedWish, user);
+    const newWish = await this.createWish(user, copiedWish);
     await this.wishesRepository.save(wishToCopy);
     await this.wishesRepository.save(newWish);
 
     return newWish;
   }
-  // что должно происходить при апдейте??
-  async updateWish(updateWishDto: UpdateWishDto) {
-    // дописать реализацию метода
+  // изменения желания
+  async updateWish(id: number, updateWishDto: UpdateWishDto): Promise<void> {
+    const wish = this.findOne(id);
+
+    if (!wish) {
+      throw new NotFoundException('Такого подарка не существует');
+    }
+
+    await this.wishesRepository.update(id, updateWishDto);
+  }
+  // удаления желания
+  async removeOne(id: number): Promise<void> {
+    const wishToDelete = this.findOne(id);
+
+    if (!wishToDelete) {
+      throw new NotFoundException('Такого подарка не существует');
+    }
+
+    await this.wishesRepository.delete(id);
   }
 }

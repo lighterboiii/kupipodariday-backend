@@ -46,12 +46,12 @@ export class UsersService {
   }
   // удаление по айди
   async removeById(id: number): Promise<void> {
-    const user = await this.usersRepository.findOneBy({ id });
+    const user = await this.findById(id);
 
     if (!user) {
       throw new NotFoundException(`Ошибка. Пользователь не найден`);
     }
 
-    await this.usersRepository.remove(user);
+    await this.usersRepository.delete(id);
   }
 }
