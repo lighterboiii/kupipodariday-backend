@@ -1,16 +1,57 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entity/user.entity';
 import { Repository } from 'typeorm';
+import { CreateUserDto } from './dto/createUser.dto';
+import { UpdateUserDto } from './dto/updateUser.dto';
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectRepository(User)
-    private readonly userRepository: Repository<User>,
+    private readonly usersRepository: Repository<User>,
   ) {}
+  // создание пользователя
+  async create(createUserDto: CreateUserDto): Promise<User> {
+    return this.usersRepository.save(
+      this.usersRepository.create(createUserDto),
+    );
+  }
+  // возвращает всех юзеров
+  async findAll(): Promise<User[]> {
+    return this.usersRepository.find();
+  }
+  // поиск по имени пользователя
+  async findByUsername(username: string): Promise<User> {
+    return await this.usersRepository.findOneBy({ username });
+  }
+  // поиск по емейлу
+  async findByEmail(email: string): Promise<User> {
+    return await this.usersRepository.findOneBy({ email });
+  }
+  // поиск по айди
+  async findById(id: number): Promise<User> {
+    return await this.usersRepository.findOneBy({ id });
+  }
+  // обновления данных пользователя
+  async updateUser(id: number, updateUserDto: UpdateUserDto): Promise<User> {
+    const user = await this.findById(id);
 
-  async create(user: User): Promise<User> {
-    return this.userRepository.save(user);
+    if (!user) {
+      throw new NotFoundException(`Ошибка. Пользователь с id: ${id} не найден`);
+    }
+
+    Object.assign(user, updateUserDto);
+    return this.usersRepository.save(user);
+  }
+  // удаление по айди
+  async removeById(id: number): Promise<void> {
+    const user = await this.usersRepository.findOneBy({ id });
+
+    if (!user) {
+      throw new NotFoundException(`Ошибка. Пользователь не найден`);
+    }
+
+    await this.usersRepository.remove(user);
   }
 }
