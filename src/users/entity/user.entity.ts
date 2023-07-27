@@ -1,4 +1,4 @@
-import { IsDate, IsEmail, Length } from 'class-validator';
+import { IsDate, IsEmail, IsOptional, Length } from 'class-validator';
 import { Offer } from 'src/offers/entity/offer.entity';
 import { Wish } from 'src/wishes/entity/wish.entity';
 import { WishList } from 'src/wishlists/entity/wishlist.entity';
@@ -31,21 +31,23 @@ export class User {
 
   @Column({ default: 'Пока ничего не рассказал о себе' })
   @Length(2, 200)
+  @IsOptional()
   about: string;
 
   @Column({ default: 'https://i.pravatar.cc/300' })
+  @IsOptional()
   avatar: string;
 
   @Column({ unique: true })
   @IsEmail()
   email: string;
 
-  @OneToMany(() => Wish, (wish) => wish.owner) // связь с подарками
+  @OneToMany(() => Wish, (wish) => wish.owner)
   wishes: Wish[];
 
-  @OneToMany(() => Offer, (offer) => offer.user) // связь с офферами
+  @OneToMany(() => Offer, (offer) => offer.user)
   offers: Offer[];
 
-  @ManyToOne(() => WishList, (wishlist) => wishlist.user) // связь юзера с его вишлистами
+  @ManyToOne(() => WishList, (wishlist) => wishlist.user)
   wishlists: WishList[];
 }

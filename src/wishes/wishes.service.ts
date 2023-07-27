@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { Wish } from './entity/wish.entity';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -85,10 +89,16 @@ export class WishesService {
   }
   // изменения желания
   async updateWish(id: number, updateWishDto: UpdateWishDto): Promise<void> {
-    const wish = this.findOne(id);
+    const wish = await this.findOne(id);
 
     if (!wish) {
       throw new NotFoundException('Такого подарка не существует');
+    }
+
+    if (wish.raised > 0) {
+      throw new BadRequestException(
+        'Нельзя изменить описание подарка после начала сбора средств',
+      );
     }
 
     await this.wishesRepository.update(id, updateWishDto);

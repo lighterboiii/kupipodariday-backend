@@ -1,6 +1,7 @@
 import {
   IsArray,
   IsNumber,
+  IsOptional,
   IsString,
   IsUrl,
   Length,
@@ -18,6 +19,7 @@ export class CreateWishlistDto {
 
   @IsString()
   @Max(1500)
+  @IsOptional()
   description?: string;
 
   @IsArray()

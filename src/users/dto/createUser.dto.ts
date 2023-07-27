@@ -12,12 +12,12 @@ export class CreateUserDto {
   @Length(6, 20)
   password: string;
 
-  @IsOptional()
   @IsString()
   @Length(2, 200)
+  @IsOptional()
   about: string;
 
-  @IsOptional()
   @IsString()
+  @IsOptional()
   avatar: string;
 }

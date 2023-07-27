@@ -19,7 +19,7 @@ export class UsersService {
   }
   // возвращает всех юзеров
   async findAll(): Promise<User[]> {
-    return this.usersRepository.find();
+    return await this.usersRepository.find();
   }
   // поиск по имени пользователя
   async findByUsername(username: string): Promise<User> {

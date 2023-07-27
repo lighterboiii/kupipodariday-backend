@@ -27,9 +27,8 @@ export class Offer {
   @ManyToOne(() => User, (user) => user.offers)
   user: User;
 
-  @Column()
   @OneToMany(() => Wish, (wish) => wish.offers)
-  item: string;
+  item: Wish;
 
   @Column()
   @IsNumber()

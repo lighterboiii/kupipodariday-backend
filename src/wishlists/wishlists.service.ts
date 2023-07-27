@@ -13,7 +13,7 @@ export class WishlistsService {
     @InjectRepository(WishList)
     private readonly wishlistsRepository: Repository<WishList>,
     @InjectRepository(Wish)
-    private readonly wishRepository: Repository<Wish>,
+    private readonly wishesRepository: Repository<Wish>,
   ) {}
   // создание вишлиста
   async createWishlist(
@@ -51,8 +51,8 @@ export class WishlistsService {
     id: number,
     updateWishlistDto: UpdateWishlistDto,
   ): Promise<WishList> {
-    const wishList = this.findOne(id);
-    const wishes = await this.wishlistsRepository.find({
+    const wishList = await this.findOne(id);
+    const wishes = await this.wishesRepository.find({
       where: { id: In(updateWishlistDto.itemsId) },
     });
 
@@ -65,7 +65,7 @@ export class WishlistsService {
       name: updateWishlistDto.name,
       image: updateWishlistDto.image,
       description: updateWishlistDto.description,
-      items: wishes,
+      items: wishes.concat(wishList.items),
     });
   }
   // удаление вишлиста
