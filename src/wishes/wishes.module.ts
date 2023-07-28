@@ -3,7 +3,6 @@ import { WishesService } from './wishes.service';
 import { WishesController } from './wishes.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Wish } from './entity/wish.entity';
-import { UsersModule } from 'src/users/users.module';
 import { User } from 'src/users/entity/user.entity';
 
 @Module({
