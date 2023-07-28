@@ -11,6 +11,11 @@ import { AuthService } from './auth/auth.service';
 import { AuthModule } from './auth/auth.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { createDbConfig } from './config/dbconfig';
+import { JwtModule } from '@nestjs/jwt';
+import { User } from './users/entity/user.entity';
+import { WishList } from './wishlists/entity/wishlist.entity';
+import { Wish } from './wishes/entity/wish.entity';
+import { Offer } from './offers/entity/offer.entity';
 
 @Module({
   imports: [
@@ -20,12 +25,14 @@ import { createDbConfig } from './config/dbconfig';
       inject: [ConfigService],
       useFactory: createDbConfig,
     }),
+    TypeOrmModule.forFeature([User, Wish, WishList, Offer]),
     UsersModule,
     WishesModule,
     WishlistsModule,
     OffersModule,
     HashModule,
     AuthModule,
+    JwtModule,
   ],
   controllers: [AppController],
   providers: [AppService, AuthService],
