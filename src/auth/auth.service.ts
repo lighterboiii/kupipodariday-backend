@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { UsersService } from 'src/users/users.service';
 import { JwtService } from '@nestjs/jwt';
 import { HashService } from 'src/hash/hash.service';
@@ -12,7 +12,7 @@ export class AuthService {
     private readonly hashService: HashService,
   ) {}
 
-  async login(user: User): Promise<any> {
+  async auth(user: User): Promise<any> {
     const payload = {
       username: user.username,
       sub: user.id,
@@ -27,7 +27,7 @@ export class AuthService {
     const user = await this.usersService.findByUsername(username);
 
     if (!user) {
-      throw new NotFoundException('Неверный логин или пароль'); // заменить
+      throw new UnauthorizedException('Неверный логин или пароль');
     }
 
     const verified = await this.hashService.verifyPassword(
@@ -36,7 +36,7 @@ export class AuthService {
     );
 
     if (!verified) {
-      throw new NotFoundException('Неверный логин или пароль'); // заменить
+      throw new UnauthorizedException('Неверный логин или пароль');
     }
   }
 }
