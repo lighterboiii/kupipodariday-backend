@@ -51,7 +51,7 @@ export class Wish {
   owner: User;
 
   @OneToMany(() => Offer, (offer) => offer.item)
-  offers: [];
+  offers: Offer[];
 
   @Column()
   @IsNumber()

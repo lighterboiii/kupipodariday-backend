@@ -63,7 +63,7 @@ export class WishesService {
   // копирование желания себе
   async copyWishToUser(wishId: number, userId: number): Promise<Wish> {
     const wishToCopy = await this.findOne(wishId);
-    const user = await this.usersRepository.findOneBy({ id: userId });
+    const user = await this.usersRepository.findOne({ where: { id: userId } });
 
     if (!wishToCopy) {
       throw new NotFoundException('Такого подарка не существует');

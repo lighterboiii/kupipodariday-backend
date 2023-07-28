@@ -23,15 +23,21 @@ export class UsersService {
   }
   // поиск по имени пользователя
   async findByUsername(username: string): Promise<User> {
-    return await this.usersRepository.findOneBy({ username });
+    return await this.usersRepository.findOne({
+      where: { username: username },
+    });
   }
   // поиск по емейлу
   async findByEmail(email: string): Promise<User> {
-    return await this.usersRepository.findOneBy({ email });
+    return await this.usersRepository.findOne({
+      where: { email: email },
+    });
   }
   // поиск по айди
   async findById(id: number): Promise<User> {
-    return await this.usersRepository.findOneBy({ id });
+    return await this.usersRepository.findOne({
+      where: { id: id },
+    });
   }
   // обновления данных пользователя
   async updateUser(id: number, updateUserDto: UpdateUserDto): Promise<User> {
