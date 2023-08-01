@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { WishList } from './entity/wishlist.entity';
 import { CreateWishlistDto } from './dto/createWishlist.dto';
 import { UpdateWishlistDto } from './dto/updateWishlist.dto';
@@ -49,6 +53,7 @@ export class WishlistsService {
   //изменение вишлиста
   async update(
     id: number,
+    userId: number,
     updateWishlistDto: UpdateWishlistDto,
   ): Promise<WishList> {
     const wishList = await this.findOne(id);
@@ -58,6 +63,10 @@ export class WishlistsService {
 
     if (!wishList) {
       throw new NotFoundException('Некорректные данные');
+    }
+
+    if (userId !== wishList.user.id) {
+      throw new UnauthorizedException('Недостаточно прав');
     }
 
     return await this.wishlistsRepository.save({
