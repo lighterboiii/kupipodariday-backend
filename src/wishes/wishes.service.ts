@@ -2,6 +2,7 @@ import {
   BadRequestException,
   Injectable,
   NotFoundException,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { Wish } from './entity/wish.entity';
@@ -25,6 +26,10 @@ export class WishesService {
       owner: user,
     });
     return await this.wishesRepository.save(wish);
+  }
+  // поиск всех wish
+  async findAll(): Promise<Wish[]> {
+    return await this.wishesRepository.find();
   }
   // поиск по айди
   async findOne(id: number) {
@@ -88,7 +93,11 @@ export class WishesService {
     return newWish;
   }
   // изменения желания
-  async updateWish(id: number, updateWishDto: UpdateWishDto): Promise<void> {
+  async updateWish(
+    id: number,
+    updateWishDto: UpdateWishDto,
+    userId: number,
+  ): Promise<void> {
     const wish = await this.findOne(id);
 
     if (!wish) {
@@ -99,6 +108,10 @@ export class WishesService {
       throw new BadRequestException(
         'Нельзя изменить описание подарка после начала сбора средств',
       );
+    }
+
+    if (wish.owner.id !== userId) {
+      throw new UnauthorizedException('Ошибка доступа');
     }
 
     await this.wishesRepository.update(id, updateWishDto);

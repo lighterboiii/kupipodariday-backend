@@ -19,7 +19,7 @@ export class WishlistsService {
     @InjectRepository(Wish)
     private readonly wishesRepository: Repository<Wish>,
   ) {}
-  // создание вишлиста
+
   async createWishlist(
     user: User,
     createWishlistDto: CreateWishlistDto,
@@ -30,7 +30,7 @@ export class WishlistsService {
     });
     return await this.wishlistsRepository.save(wishList);
   }
-  //поиск вишлиста
+
   async findOne(id: number): Promise<WishList> {
     const wishlist = await this.wishlistsRepository.findOne({
       where: { id },
@@ -41,7 +41,7 @@ export class WishlistsService {
     });
     return wishlist;
   }
-  //поиск всех вишлистов
+
   async findAll() {
     return await this.wishlistsRepository.find({
       relations: {
@@ -50,7 +50,7 @@ export class WishlistsService {
       },
     });
   }
-  //изменение вишлиста
+
   async update(
     id: number,
     userId: number,
@@ -77,7 +77,7 @@ export class WishlistsService {
       items: wishes.concat(wishList.items),
     });
   }
-  // удаление вишлиста
+
   async removeOne(id: number): Promise<void> {
     const wishList = this.findOne(id);
 
