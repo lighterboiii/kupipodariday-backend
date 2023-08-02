@@ -67,6 +67,4 @@ export class OffersService {
       },
     });
   }
-
-  // написать метод удаления оффера?
 }
