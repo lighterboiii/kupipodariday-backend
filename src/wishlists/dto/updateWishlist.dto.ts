@@ -1,11 +1,4 @@
-import {
-  IsArray,
-  IsNumber,
-  IsString,
-  IsUrl,
-  Length,
-  Max,
-} from 'class-validator';
+import { IsArray, IsNumber, IsString, IsUrl, Length } from 'class-validator';
 
 export class UpdateWishlistDto {
   @IsString()
@@ -15,10 +8,6 @@ export class UpdateWishlistDto {
   @IsUrl()
   @IsString()
   image?: string;
-
-  @IsString()
-  @Max(1500)
-  description?: string;
 
   @IsArray()
   @IsNumber({}, { each: true })

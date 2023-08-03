@@ -1,12 +1,4 @@
-import {
-  IsArray,
-  IsNumber,
-  IsOptional,
-  IsString,
-  IsUrl,
-  Length,
-  Max,
-} from 'class-validator';
+import { IsArray, IsNumber, IsString, IsUrl, Length } from 'class-validator';
 
 export class CreateWishlistDto {
   @IsString()
@@ -16,11 +8,6 @@ export class CreateWishlistDto {
   @IsUrl()
   @IsString()
   image: string;
-
-  @IsString()
-  @Max(1500)
-  @IsOptional()
-  description?: string;
 
   @IsArray()
   @IsNumber({}, { each: true })

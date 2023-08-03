@@ -35,10 +35,16 @@ export class OffersService {
     }
 
     if (wish.owner.id === user.id) {
-      throw new BadRequestException('Вы не можете скидываться на свой подарок');
+      throw new BadRequestException(
+        'Вы не можете участвовать в сборе на свой подарок',
+      );
     }
 
     const newAmount = wish.raised + createOfferDto.amount;
+
+    if (newAmount > wish.price) {
+      throw new BadRequestException('Сумма вклада превышает его стоимость');
+    }
 
     const createdOffer = this.offersRepository.create({
       amount: createOfferDto.amount,

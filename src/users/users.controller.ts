@@ -15,20 +15,19 @@ import { CreateUserDto } from './dto/createUser.dto';
 import { User } from './entity/user.entity';
 import { UpdateUserDto } from './dto/updateUser.dto';
 import { JwtGuard } from 'src/auth/guards/auth.guard';
+import { WishesService } from 'src/wishes/wishes.service';
 
 @Controller('users')
 @UseGuards(JwtGuard)
 export class UsersController {
-  constructor(private readonly usersService: UsersService) {}
+  constructor(
+    private readonly usersService: UsersService,
+    private readonly wishesService: WishesService,
+  ) {}
 
   @Get()
   async findAll(): Promise<User[]> {
     return await this.usersService.findAll();
-  }
-
-  @Post()
-  async createUser(@Body() createUserDto: CreateUserDto): Promise<User> {
-    return await this.usersService.createUser(createUserDto);
   }
 
   @Get('me')
@@ -51,6 +50,12 @@ export class UsersController {
     }
 
     return userData;
+  }
+
+  @Get(':username/wishes')
+  async getUserWishes(@Param('username') username: string) {
+    const userId = await this.usersService.findByUsername(username);
+    return await this.wishesService.findUserWishes(Number(userId));
   }
 
   @Patch('me')

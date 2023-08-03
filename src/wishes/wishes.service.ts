@@ -19,7 +19,7 @@ export class WishesService {
     @InjectRepository(User)
     private readonly usersRepository: Repository<User>,
   ) {}
-  // создание wish
+
   async createWish(user: User, createWishDto: CreateWishDto): Promise<Wish> {
     const wish = this.wishesRepository.create({
       ...createWishDto,
@@ -27,11 +27,11 @@ export class WishesService {
     });
     return await this.wishesRepository.save(wish);
   }
-  // поиск всех wish
+
   async findAll(): Promise<Wish[]> {
     return await this.wishesRepository.find();
   }
-  // поиск по айди
+
   async findOne(id: number) {
     return await this.wishesRepository.findOne({
       where: { id },
@@ -41,7 +41,7 @@ export class WishesService {
       },
     });
   }
-  // поиск последних 40 желаний
+
   async findLastWishes() {
     return await this.wishesRepository.find({
       relations: {
@@ -53,7 +53,7 @@ export class WishesService {
       take: 40,
     });
   }
-  // поиск топ 20 желаний
+
   async findTopWishes() {
     return await this.wishesRepository.find({
       relations: {
@@ -65,7 +65,17 @@ export class WishesService {
       take: 20,
     });
   }
-  // копирование желания себе
+
+  async findUserWishes(id: number) {
+    return await this.wishesRepository.find({
+      where: {
+        owner: {
+          id,
+        },
+      },
+    });
+  }
+
   async copyWishToUser(wishId: number, userId: number): Promise<Wish> {
     const wishToCopy = await this.findOne(wishId);
     const user = await this.usersRepository.findOne({ where: { id: userId } });
@@ -92,7 +102,7 @@ export class WishesService {
 
     return newWish;
   }
-  // изменения желания
+
   async updateWish(
     id: number,
     updateWishDto: UpdateWishDto,
@@ -116,7 +126,7 @@ export class WishesService {
 
     await this.wishesRepository.update(id, updateWishDto);
   }
-  // удаления желания
+
   async removeOne(id: number): Promise<void> {
     const wishToDelete = this.findOne(id);
 

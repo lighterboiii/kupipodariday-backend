@@ -27,7 +27,7 @@ export class AuthService {
     const user = await this.usersService.findByUsername(username);
 
     if (!user) {
-      throw new UnauthorizedException('Неверный логин или пароль');
+      throw new UnauthorizedException('Некорректная пара логин и пароль');
     }
 
     const verified = await this.hashService.verifyPassword(
@@ -36,7 +36,7 @@ export class AuthService {
     );
 
     if (!verified) {
-      throw new UnauthorizedException('Неверный логин или пароль');
+      throw new UnauthorizedException('Некорректная пара логин и пароль');
     }
   }
 }

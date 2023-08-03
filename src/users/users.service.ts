@@ -17,35 +17,36 @@ export class UsersService {
     private readonly usersRepository: Repository<User>,
     private readonly hashService: HashService,
   ) {}
-  // создание пользователя
+
   async createUser(createUserDto: CreateUserDto): Promise<User> {
-    return await this.usersRepository.save(
-      this.usersRepository.create(createUserDto),
-    );
+    return await this.usersRepository.save({
+      ...createUserDto,
+      password: await this.hashService.hashPassword(createUserDto.password),
+    });
   }
-  // возвращает всех юзеров
+
   async findAll(): Promise<User[]> {
     return await this.usersRepository.find();
   }
-  // поиск по имени пользователя
+
   async findByUsername(username: string): Promise<User> {
     return await this.usersRepository.findOne({
       where: { username: username },
     });
   }
-  // поиск по емейлу
+
   async findByEmail(email: string): Promise<User> {
     return await this.usersRepository.findOne({
       where: { email: email },
     });
   }
-  // поиск по айди
+
   async findById(id: number): Promise<User> {
     return await this.usersRepository.findOne({
       where: { id: id },
     });
   }
-  // обновление данных пользователя
+
   async updateUser(id: number, updateUserDto: UpdateUserDto): Promise<User> {
     const user = await this.findById(id);
 
