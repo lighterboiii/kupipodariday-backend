@@ -47,12 +47,12 @@ export class WishesController {
     return wish;
   }
 
-  @Get('/top')
+  @Get('top')
   async getTopWishes(): Promise<Wish[]> {
     return await this.wishesService.findTopWishes();
   }
 
-  @Get('/last')
+  @Get('last')
   async getLastWishes(): Promise<Wish[]> {
     return await this.wishesService.findLastWishes();
   }

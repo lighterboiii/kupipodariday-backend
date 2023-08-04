@@ -26,17 +26,18 @@ export class AuthService {
   async validateUser(username: string, password: string): Promise<any> {
     const user = await this.usersService.findByUsername(username);
 
-    if (!user) {
-      throw new UnauthorizedException('Некорректная пара логин и пароль');
-    }
-
-    const verified = await this.hashService.verifyPassword(
+    const verifyPassword = await this.hashService.verifyPassword(
       password,
       user.password,
     );
 
-    if (!verified) {
-      throw new UnauthorizedException('Некорректная пара логин и пароль');
+    if (verifyPassword) {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const { password, ...result } = user;
+
+      return user;
     }
+
+    return null;
   }
 }

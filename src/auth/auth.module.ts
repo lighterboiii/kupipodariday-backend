@@ -5,9 +5,10 @@ import { HashModule } from 'src/hash/hash.module';
 import { UsersModule } from 'src/users/users.module';
 import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
-import { ConfigModule, ConfigService } from '@nestjs/config';
+import { ConfigModule } from '@nestjs/config';
 import { JwtStrategy } from 'src/strategy/jwt.strategy';
 import { LocalStrategy } from 'src/strategy/local.strategy';
+import jwtConfig from 'src/config/jwtConfig';
 
 @Module({
   imports: [
@@ -17,12 +18,7 @@ import { LocalStrategy } from 'src/strategy/local.strategy';
     ConfigModule,
     JwtModule.registerAsync({
       imports: [ConfigModule],
-      useFactory: async (configService: ConfigService) => ({
-        secret: configService.get<string>(
-          'this_is_super_secret_jwt_secret_key',
-        ),
-      }),
-      inject: [ConfigService],
+      useFactory: jwtConfig,
     }),
   ],
   controllers: [AuthController],

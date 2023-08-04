@@ -19,7 +19,7 @@ export class UsersService {
   ) {}
 
   async createUser(createUserDto: CreateUserDto): Promise<User> {
-    return await this.usersRepository.save({
+    return this.usersRepository.save({
       ...createUserDto,
       password: await this.hashService.hashPassword(createUserDto.password),
     });
