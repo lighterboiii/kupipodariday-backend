@@ -54,25 +54,27 @@ export class UsersService {
       throw new NotFoundException(`Ошибка. Пользователь с id: ${id} не найден`);
     }
 
-    if (updateUserDto.email !== user.email) {
-      const userExist = this.findByEmail(updateUserDto.email);
+    // if (updateUserDto.email !== user.email) {
+    //   const userExist = this.findByEmail(updateUserDto.email);
 
-      if (userExist) {
-        throw new BadRequestException(
-          'Пользователь с такими данными уже существует',
-        );
-      }
-    }
+    //   if (userExist) {
+    //     throw new BadRequestException(
+    //       'Пользователь с такими данными уже существует',
+    //     );
+    //   }
+    // }
 
-    if (updateUserDto.username !== user.username) {
-      const userExist = this.findByUsername(updateUserDto.email);
+    // поменять условие
 
-      if (userExist) {
-        throw new BadRequestException(
-          'Пользователь с такими данными уже существует',
-        );
-      }
-    }
+    // if (updateUserDto.username !== user.username) {
+    //   const userExist = this.findByUsername(updateUserDto.email);
+
+    //   if (userExist) {
+    //     throw new BadRequestException(
+    //       'Пользователь с такими данными уже существует',
+    //     );
+    //   }
+    // }
 
     if (updateUserDto.password) {
       this.hashService.hashPassword(updateUserDto.password);
@@ -81,7 +83,7 @@ export class UsersService {
     Object.assign(user, updateUserDto);
     return this.usersRepository.save(user);
   }
-  // удаление по айди
+
   async removeById(id: number): Promise<void> {
     const user = await this.findById(id);
 
@@ -90,5 +92,18 @@ export class UsersService {
     }
 
     await this.usersRepository.delete(id);
+  }
+
+  async findMany(query: string) {
+    const emailRegexp = /^[\w\.-]+@[\w\.-]+\.\w{2,4}$/;
+
+    const user = emailRegexp.test(query)
+      ? await this.findByEmail(query)
+      : await this.findByUsername(query);
+    if (!user) {
+      throw new NotFoundException('Пользователь не найден');
+    }
+
+    return [user];
   }
 }

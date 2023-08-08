@@ -5,7 +5,7 @@ import { HashModule } from 'src/hash/hash.module';
 import { UsersModule } from 'src/users/users.module';
 import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
-import { ConfigModule, ConfigService } from '@nestjs/config';
+import { ConfigModule } from '@nestjs/config';
 import { JwtStrategy } from 'src/strategy/jwt.strategy';
 import { LocalStrategy } from 'src/strategy/local.strategy';
 import JWTConfigService from 'src/config/jwtConfig';
