@@ -21,11 +21,6 @@ import { JwtGuard } from 'src/auth/guards/auth.guard';
 export class WishesController {
   constructor(private readonly wishesService: WishesService) {}
 
-  @Get()
-  async getAllWishes(): Promise<Wish[]> {
-    return await this.wishesService.findAll();
-  }
-
   @Post()
   @UseGuards(JwtGuard)
   async createWish(

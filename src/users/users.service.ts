@@ -1,8 +1,4 @@
-import {
-  BadRequestException,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entity/user.entity';
 import { Repository } from 'typeorm';
@@ -54,34 +50,12 @@ export class UsersService {
       throw new NotFoundException(`Ошибка. Пользователь с id: ${id} не найден`);
     }
 
-    // if (updateUserDto.email !== user.email) {
-    //   const userExist = this.findByEmail(updateUserDto.email);
-
-    //   if (userExist) {
-    //     throw new BadRequestException(
-    //       'Пользователь с такими данными уже существует',
-    //     );
-    //   }
-    // }
-
-    // поменять условие
-
-    // if (updateUserDto.username !== user.username) {
-    //   const userExist = this.findByUsername(updateUserDto.email);
-
-    //   if (userExist) {
-    //     throw new BadRequestException(
-    //       'Пользователь с такими данными уже существует',
-    //     );
-    //   }
-    // }
-
     if (updateUserDto.password) {
       this.hashService.hashPassword(updateUserDto.password);
     }
 
     Object.assign(user, updateUserDto);
-    return this.usersRepository.save(user);
+    return await this.usersRepository.save(user);
   }
 
   async removeById(id: number): Promise<void> {
@@ -100,9 +74,6 @@ export class UsersService {
     const user = emailRegexp.test(query)
       ? await this.findByEmail(query)
       : await this.findByUsername(query);
-    if (!user) {
-      throw new NotFoundException('Пользователь не найден');
-    }
 
     return [user];
   }
