@@ -1,4 +1,4 @@
-import { IsDate, IsNumber, IsUrl, Length } from 'class-validator';
+import { IsDate, IsNumber, IsOptional, IsUrl, Length } from 'class-validator';
 import { Offer } from 'src/offers/entity/offer.entity';
 import { User } from 'src/users/entity/user.entity';
 import {
@@ -39,7 +39,12 @@ export class Wish {
   @IsNumber()
   price: number;
 
-  @Column()
+  @Column({
+    type: 'numeric',
+    precision: 10,
+    scale: 2,
+    default: 0,
+  })
   @IsNumber()
   raised: number;
 
@@ -53,7 +58,12 @@ export class Wish {
   @OneToMany(() => Offer, (offer) => offer.item)
   offers: Offer[];
 
-  @Column()
+  @Column({
+    type: 'numeric',
+    precision: 10,
+    scale: 2,
+    default: 0,
+  })
   @IsNumber()
   copied: number;
 }

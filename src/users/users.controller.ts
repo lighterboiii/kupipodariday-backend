@@ -25,11 +25,6 @@ export class UsersController {
     private readonly wishesService: WishesService,
   ) {}
 
-  @Get()
-  async findAll(): Promise<User[]> {
-    return await this.usersService.findAll();
-  }
-
   @Get('me')
   async getCurrentUser(@Req() user: User): Promise<User> {
     const currentUser = await this.usersService.findById(user.id);
@@ -70,7 +65,8 @@ export class UsersController {
     @Req() user: User,
     @Body() updateUserDto: UpdateUserDto,
   ): Promise<User> {
-    return await this.usersService.updateUser(user.id, updateUserDto);
+    console.log(user.id);
+    return await this.usersService.updateUser(user, updateUserDto);
   }
 
   @Post('find')

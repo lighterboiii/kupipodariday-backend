@@ -9,6 +9,7 @@ import {
   Patch,
   Delete,
   UseGuards,
+  Request,
 } from '@nestjs/common';
 import { WishesService } from './wishes.service';
 import { Wish } from './entity/wish.entity';
@@ -24,22 +25,15 @@ export class WishesController {
   @Post()
   @UseGuards(JwtGuard)
   async createWish(
-    @Req() user: User,
+    @Req() userId: number,
     @Body() createWishDto: CreateWishDto,
   ): Promise<Wish> {
-    return await this.wishesService.createWish(user, createWishDto);
+    return await this.wishesService.createWish(userId, createWishDto);
   }
 
   @Get(':id')
-  @UseGuards(JwtGuard)
-  async getWishById(@Param('id') id: number): Promise<Wish> {
-    const wish = await this.wishesService.findOne(id);
-
-    if (!wish) {
-      throw new NotFoundException('Некорректные данные');
-    }
-
-    return wish;
+  async getWishById(@Param('id') id: string): Promise<Wish> {
+    return await this.wishesService.findOne(Number(id));
   }
 
   @Get('top')
@@ -76,7 +70,7 @@ export class WishesController {
 
   @Delete(':id')
   @UseGuards(JwtGuard)
-  async deleteWish(@Param(':id') id: string) {
-    return await this.wishesService.removeOne(Number(id));
+  async deleteWish() {
+    return 'Метод удаления желания';
   }
 }

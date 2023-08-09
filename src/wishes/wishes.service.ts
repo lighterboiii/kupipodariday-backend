@@ -10,6 +10,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { CreateWishDto } from './dto/createWish.dto';
 import { UpdateWishDto } from './dto/updateWish.dto';
 import { User } from 'src/users/entity/user.entity';
+import { UsersService } from 'src/users/users.service';
 
 @Injectable()
 export class WishesService {
@@ -18,32 +19,39 @@ export class WishesService {
     private readonly wishesRepository: Repository<Wish>,
     @InjectRepository(User)
     private readonly usersRepository: Repository<User>,
+    private readonly usersService: UsersService,
   ) {}
 
-  async createWish(user: User, createWishDto: CreateWishDto): Promise<Wish> {
-    const wish = this.wishesRepository.create({
+  async createWish(
+    userId: number,
+    createWishDto: CreateWishDto,
+  ): Promise<Wish> {
+    const { password, ...rest } = await this.usersService.findById(userId);
+    return await this.wishesRepository.save({
       ...createWishDto,
-      owner: user,
+      owner: rest,
     });
-    return await this.wishesRepository.save(wish);
   }
 
-  async findAll(): Promise<Wish[]> {
-    return await this.wishesRepository.find();
-  }
+  // async findAll(): Promise<Wish[]> {
+  //   return await this.wishesRepository.find();
+  // }
 
   async findOne(id: number) {
-    return await this.wishesRepository.findOne({
+    const wish = await this.wishesRepository.findOne({
+      relations: ['owner', 'offers', 'offers.user'],
       where: { id },
-      relations: {
-        owner: true,
-        offers: true,
-      },
     });
+
+    if (!wish) {
+      throw new NotFoundException('Некорректные данные');
+    }
+
+    return wish;
   }
 
   async findLastWishes() {
-    return await this.wishesRepository.find({
+    const wishes = await this.wishesRepository.find({
       relations: {
         owner: true,
       },
@@ -52,10 +60,16 @@ export class WishesService {
       },
       take: 40,
     });
+
+    if (!wishes) {
+      throw new NotFoundException('Не найдено');
+    }
+
+    return wishes;
   }
 
   async findTopWishes() {
-    return await this.wishesRepository.find({
+    const wishes = await this.wishesRepository.find({
       relations: {
         owner: true,
       },
@@ -64,6 +78,12 @@ export class WishesService {
       },
       take: 20,
     });
+
+    if (!wishes) {
+      throw new NotFoundException('Не найдено');
+    }
+
+    return wishes;
   }
 
   async findUserWishes(id: number) {
@@ -96,7 +116,7 @@ export class WishesService {
     };
     wishToCopy.copied += 1;
 
-    const newWish = await this.createWish(user, copiedWish);
+    const newWish = await this.createWish(user.id, copiedWish);
     await this.wishesRepository.save(wishToCopy);
     await this.wishesRepository.save(newWish);
 
@@ -127,13 +147,13 @@ export class WishesService {
     await this.wishesRepository.update(id, updateWishDto);
   }
 
-  async removeOne(id: number): Promise<void> {
-    const wishToDelete = this.findOne(id);
+  async removeOne(wishId: number, userId: number): Promise<void> {
+    const wish = await this.findOne(wishId);
 
-    if (!wishToDelete) {
+    if (userId !== wish.owner.id) {
       throw new NotFoundException('Такого подарка не существует');
     }
 
-    await this.wishesRepository.delete(id);
+    await this.wishesRepository.delete(wishId);
   }
 }

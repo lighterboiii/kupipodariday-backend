@@ -35,7 +35,7 @@ export class User {
   about: string;
 
   @Column()
-  password: string;
+  password?: string;
 
   @Column({ default: 'https://i.pravatar.cc/300' })
   @IsOptional()
