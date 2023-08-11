@@ -25,15 +25,11 @@ export class WishesController {
   @Post()
   @UseGuards(JwtGuard)
   async createWish(
-    @Req() userId: number,
+    @Req() req,
     @Body() createWishDto: CreateWishDto,
   ): Promise<Wish> {
-    return await this.wishesService.createWish(userId, createWishDto);
-  }
-
-  @Get(':id')
-  async getWishById(@Param('id') id: string): Promise<Wish> {
-    return await this.wishesService.findOne(Number(id));
+    console.log(req);
+    return await this.wishesService.createWish(req.id, createWishDto);
   }
 
   @Get('top')
@@ -44,6 +40,11 @@ export class WishesController {
   @Get('last')
   async getLastWishes(): Promise<Wish[]> {
     return await this.wishesService.findLastWishes();
+  }
+
+  @Get(':id')
+  async getWishById(@Param('id') id: string): Promise<Wish> {
+    return await this.wishesService.findOne(Number(id));
   }
 
   @Post(':id/copy')
@@ -70,7 +71,7 @@ export class WishesController {
 
   @Delete(':id')
   @UseGuards(JwtGuard)
-  async deleteWish() {
-    return 'Метод удаления желания';
+  async deleteWish(@Param('id') wishId: number, @Req() req) {
+    return this.wishesService.removeOne(wishId, req.id);
   }
 }

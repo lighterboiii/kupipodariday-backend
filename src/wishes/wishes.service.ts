@@ -33,16 +33,12 @@ export class WishesService {
     });
   }
 
-  // async findAll(): Promise<Wish[]> {
-  //   return await this.wishesRepository.find();
-  // }
-
   async findOne(id: number) {
     const wish = await this.wishesRepository.findOne({
-      relations: ['owner', 'offers', 'offers.user'],
       where: { id },
+      relations: ['owner', 'offers', 'offers.user'],
     });
-
+    console.log(wish);
     if (!wish) {
       throw new NotFoundException('Некорректные данные');
     }
@@ -147,13 +143,13 @@ export class WishesService {
     await this.wishesRepository.update(id, updateWishDto);
   }
 
-  async removeOne(wishId: number, userId: number): Promise<void> {
-    const wish = await this.findOne(wishId);
+  // async removeOne(wishId: number, userId: number): Promise<void> {
+  //   const wish = await this.findOne(wishId);
 
-    if (userId !== wish.owner.id) {
-      throw new NotFoundException('Такого подарка не существует');
-    }
+  //   if (userId !== wish.owner.id) {
+  //     throw new NotFoundException('Вы можете удалять только свои подарки');
+  //   }
 
-    await this.wishesRepository.delete(wishId);
-  }
+  //   await this.wishesRepository.delete(wishId);
+  // }
 }

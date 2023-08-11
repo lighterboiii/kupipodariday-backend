@@ -26,8 +26,8 @@ export class UsersController {
   ) {}
 
   @Get('me')
-  async getCurrentUser(@Req() user: User): Promise<User> {
-    const currentUser = await this.usersService.findById(user.id);
+  async getCurrentUser(@Req() req): Promise<User> {
+    const currentUser = await this.usersService.findById(req.user.id);
 
     if (!currentUser) {
       throw new NotFoundException('Пользователь не найден');
@@ -41,6 +41,25 @@ export class UsersController {
     const id = user.id;
 
     return await this.wishesService.findUserWishes(id);
+  }
+
+  @Patch('me')
+  async updateUserData(
+    @Req() req,
+    @Body() updateUserDto: UpdateUserDto,
+  ): Promise<User> {
+    return await this.usersService.updateUser(req.user.id, updateUserDto);
+  }
+
+  @Post('find')
+  async findByQuery(@Body('query') query: string): Promise<User[]> {
+    const user = await this.usersService.findMany(query);
+
+    if (!user) {
+      throw new NotFoundException('Пользователь не найден');
+    }
+
+    return user;
   }
 
   @Get(':username')
@@ -58,26 +77,6 @@ export class UsersController {
   async getUserWishes(@Param('username') username: string) {
     const userId = await this.usersService.findByUsername(username);
     return await this.wishesService.findUserWishes(Number(userId));
-  }
-
-  @Patch('me')
-  async updateUserData(
-    @Req() user: User,
-    @Body() updateUserDto: UpdateUserDto,
-  ): Promise<User> {
-    console.log(user.id);
-    return await this.usersService.updateUser(user, updateUserDto);
-  }
-
-  @Post('find')
-  async findByQuery(@Body('query') query: string): Promise<User[]> {
-    const user = await this.usersService.findMany(query);
-
-    if (!user) {
-      throw new NotFoundException('Пользователь не найден');
-    }
-
-    return user;
   }
 
   @Delete(':id')

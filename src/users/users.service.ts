@@ -37,44 +37,44 @@ export class UsersService {
     return await this.usersRepository.findOneBy({ id });
   }
 
-  // async update(id: number, updateUserDto: UpdateUserDto) {
-  //   const newUserData = updateUserDto.hasOwnProperty('password')
-  //     ? await this.hashService.getUserData<UpdateUserDto>(updateUserDto)
-  //     : updateUserDto;
-  //   const user = await this.usersRepository.update(id, newUserData);
-  //   if (user.affected === 0) {
-  //     throw new BadRequestException('Ошибка');
-  //   }
-  //   return this.findById(id);
-  // }
-
-  async updateUser(user: User, updateUserDto: UpdateUserDto) {
-    const { id } = user;
-    const { email, username } = updateUserDto;
-    if (updateUserDto.password) {
-      updateUserDto.password = await this.hashService.hashPassword(
-        updateUserDto.password,
-      );
+  async updateUser(id: number, updateUserDto: UpdateUserDto) {
+    const newUserData = updateUserDto.hasOwnProperty('password')
+      ? await this.hashService.getUserData<UpdateUserDto>(updateUserDto)
+      : updateUserDto;
+    const user = await this.usersRepository.update(id, newUserData);
+    if (user.affected === 0) {
+      throw new BadRequestException('Ошибка');
     }
-    const isUserExist = (await this.usersRepository.findOne({
-      where: [{ email }, { username }],
-    }))
-      ? true
-      : false;
-
-    if (isUserExist) {
-      throw new BadRequestException(
-        'Пользователь с таким email или username уже зарегистрирован',
-      );
-    }
-    try {
-      await this.usersRepository.update(id, updateUserDto);
-      const { password, ...updatedUser } = await this.findById(id);
-      return updatedUser;
-    } catch {
-      throw new BadRequestException('Некорректные данные');
-    }
+    return this.findById(id);
   }
+
+  // async updateUser(user: User, updateUserDto: UpdateUserDto) {
+  //   const { id } = user;
+  //   const { email, username } = updateUserDto;
+  //   if (updateUserDto.password) {
+  //     updateUserDto.password = await this.hashService.hashPassword(
+  //       updateUserDto.password,
+  //     );
+  //   }
+  //   const isUserExist = (await this.usersRepository.findOne({
+  //     where: [{ email }, { username }],
+  //   }))
+  //     ? true
+  //     : false;
+
+  //   if (isUserExist) {
+  //     throw new BadRequestException(
+  //       'Пользователь с таким email или username уже зарегистрирован',
+  //     );
+  //   }
+  //   try {
+  //     await this.usersRepository.update(id, updateUserDto);
+  //     const { password, ...updatedUser } = await this.findById(id);
+  //     return updatedUser;
+  //   } catch {
+  //     throw new BadRequestException('Некорректные данные');
+  //   }
+  // }
 
   async removeById(id: number): Promise<void> {
     const user = await this.findById(id);
