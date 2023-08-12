@@ -26,6 +26,7 @@ export class WishesService {
     userId: number,
     createWishDto: CreateWishDto,
   ): Promise<Wish> {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { password, ...rest } = await this.usersService.findById(userId);
     return await this.wishesRepository.save({
       ...createWishDto,
@@ -143,13 +144,13 @@ export class WishesService {
     await this.wishesRepository.update(id, updateWishDto);
   }
 
-  // async removeOne(wishId: number, userId: number): Promise<void> {
-  //   const wish = await this.findOne(wishId);
+  async removeOne(wishId: number, userId: number): Promise<void> {
+    const wish = await this.findOne(wishId);
 
-  //   if (userId !== wish.owner.id) {
-  //     throw new NotFoundException('Вы можете удалять только свои подарки');
-  //   }
+    if (userId !== wish.owner.id) {
+      throw new NotFoundException('Вы можете удалять только свои подарки');
+    }
 
-  //   await this.wishesRepository.delete(wishId);
-  // }
+    await this.wishesRepository.delete(wishId);
+  }
 }

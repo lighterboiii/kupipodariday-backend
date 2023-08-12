@@ -43,14 +43,6 @@ export class UsersController {
     return await this.wishesService.findUserWishes(id);
   }
 
-  @Patch('me')
-  async updateUserData(
-    @Req() req,
-    @Body() updateUserDto: UpdateUserDto,
-  ): Promise<User> {
-    return await this.usersService.updateUser(req.user.id, updateUserDto);
-  }
-
   @Post('find')
   async findByQuery(@Body('query') query: string): Promise<User[]> {
     const user = await this.usersService.findMany(query);
@@ -60,6 +52,14 @@ export class UsersController {
     }
 
     return user;
+  }
+
+  @Patch('me')
+  async updateUserData(
+    @Req() req,
+    @Body() updateUserDto: UpdateUserDto,
+  ): Promise<User> {
+    return await this.usersService.updateUser(req.user.id, updateUserDto);
   }
 
   @Get(':username')

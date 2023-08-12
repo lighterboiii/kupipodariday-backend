@@ -48,34 +48,6 @@ export class UsersService {
     return this.findById(id);
   }
 
-  // async updateUser(user: User, updateUserDto: UpdateUserDto) {
-  //   const { id } = user;
-  //   const { email, username } = updateUserDto;
-  //   if (updateUserDto.password) {
-  //     updateUserDto.password = await this.hashService.hashPassword(
-  //       updateUserDto.password,
-  //     );
-  //   }
-  //   const isUserExist = (await this.usersRepository.findOne({
-  //     where: [{ email }, { username }],
-  //   }))
-  //     ? true
-  //     : false;
-
-  //   if (isUserExist) {
-  //     throw new BadRequestException(
-  //       'Пользователь с таким email или username уже зарегистрирован',
-  //     );
-  //   }
-  //   try {
-  //     await this.usersRepository.update(id, updateUserDto);
-  //     const { password, ...updatedUser } = await this.findById(id);
-  //     return updatedUser;
-  //   } catch {
-  //     throw new BadRequestException('Некорректные данные');
-  //   }
-  // }
-
   async removeById(id: number): Promise<void> {
     const user = await this.findById(id);
 
@@ -92,6 +64,8 @@ export class UsersService {
     const user = emailRegexp.test(query)
       ? await this.findByEmail(query)
       : await this.findByUsername(query);
+
+    if (!user) return null;
 
     return [user];
   }

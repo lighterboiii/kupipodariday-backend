@@ -1,4 +1,4 @@
-import { IsDate, IsNumber, IsOptional, IsUrl, Length } from 'class-validator';
+import { IsDate, IsNumber, IsUrl, Length } from 'class-validator';
 import { Offer } from 'src/offers/entity/offer.entity';
 import { User } from 'src/users/entity/user.entity';
 import {

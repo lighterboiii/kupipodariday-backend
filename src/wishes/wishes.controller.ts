@@ -4,12 +4,10 @@ import {
   Req,
   Post,
   Body,
-  NotFoundException,
   Param,
   Patch,
   Delete,
   UseGuards,
-  Request,
 } from '@nestjs/common';
 import { WishesService } from './wishes.service';
 import { Wish } from './entity/wish.entity';
