@@ -48,16 +48,6 @@ export class UsersService {
     return this.findById(id);
   }
 
-  async removeById(id: number): Promise<void> {
-    const user = await this.findById(id);
-
-    if (!user) {
-      throw new NotFoundException(`Ошибка. Пользователь не найден`);
-    }
-
-    await this.usersRepository.delete(id);
-  }
-
   async findMany(query: string) {
     const emailRegexp = /^[\w\.-]+@[\w\.-]+\.\w{2,4}$/;
 
@@ -68,5 +58,15 @@ export class UsersService {
     if (!user) return null;
 
     return [user];
+  }
+
+  async removeById(id: number): Promise<void> {
+    const user = await this.findById(id);
+
+    if (!user) {
+      throw new NotFoundException(`Ошибка. Пользователь не найден`);
+    }
+
+    await this.usersRepository.delete(id);
   }
 }

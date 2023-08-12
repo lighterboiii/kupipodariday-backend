@@ -20,8 +20,8 @@ import { JwtGuard } from 'src/auth/guards/auth.guard';
 export class WishesController {
   constructor(private readonly wishesService: WishesService) {}
 
-  @Post()
   @UseGuards(JwtGuard)
+  @Post()
   async createWish(
     @Req() req,
     @Body() createWishDto: CreateWishDto,
@@ -40,20 +40,24 @@ export class WishesController {
     return await this.wishesService.findLastWishes();
   }
 
+  @UseGuards(JwtGuard)
   @Get(':id')
-  async getWishById(@Param('id') id: string): Promise<Wish> {
-    return await this.wishesService.findOne(Number(id));
+  async getWishById(
+    @Req() { user: { id } },
+    @Param('id') wishId: number,
+  ): Promise<Wish> {
+    return await this.wishesService.findWithUser(id, wishId);
   }
 
-  @Post(':id/copy')
   @UseGuards(JwtGuard)
+  @Post(':id/copy')
   async copyWish(@Req() user: User, @Param(':id') id: string) {
     const userId = user.id;
     return await this.wishesService.copyWishToUser(userId, Number(id));
   }
 
-  @Patch(':id')
   @UseGuards(JwtGuard)
+  @Patch(':id')
   async updateWish(
     @Param(':id') id: string,
     @Body() updateWishDto: UpdateWishDto,
@@ -67,8 +71,8 @@ export class WishesController {
     );
   }
 
-  @Delete(':id')
   @UseGuards(JwtGuard)
+  @Delete(':id')
   async deleteWish(@Param('id') wishId: number, @Req() req) {
     return this.wishesService.removeOne(wishId, req.id);
   }

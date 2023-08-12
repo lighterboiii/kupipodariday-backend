@@ -17,8 +17,8 @@ import { JwtGuard } from 'src/auth/guards/auth.guard';
 import { WishesService } from 'src/wishes/wishes.service';
 import { Wish } from 'src/wishes/entity/wish.entity';
 
-@Controller('users')
 @UseGuards(JwtGuard)
+@Controller('users')
 export class UsersController {
   constructor(
     private readonly usersService: UsersService,
@@ -37,29 +37,15 @@ export class UsersController {
   }
 
   @Get('me/wishes')
-  async findMyWishes(@Req() user: User): Promise<Wish[]> {
-    const id = user.id;
-
-    return await this.wishesService.findUserWishes(id);
+  async findMyWishes(@Req() req): Promise<Wish[]> {
+    return await this.wishesService.findUserWishes(req.user.id);
   }
 
   @Post('find')
   async findByQuery(@Body('query') query: string): Promise<User[]> {
     const user = await this.usersService.findMany(query);
 
-    if (!user) {
-      throw new NotFoundException('Пользователь не найден');
-    }
-
     return user;
-  }
-
-  @Patch('me')
-  async updateUserData(
-    @Req() req,
-    @Body() updateUserDto: UpdateUserDto,
-  ): Promise<User> {
-    return await this.usersService.updateUser(req.user.id, updateUserDto);
   }
 
   @Get(':username')
@@ -75,8 +61,16 @@ export class UsersController {
 
   @Get(':username/wishes')
   async getUserWishes(@Param('username') username: string) {
-    const userId = await this.usersService.findByUsername(username);
-    return await this.wishesService.findUserWishes(Number(userId));
+    const { id } = await this.usersService.findByUsername(username);
+    return await this.wishesService.findUserWishes(+id);
+  }
+
+  @Patch('me')
+  async updateUserData(
+    @Req() req,
+    @Body() updateUserDto: UpdateUserDto,
+  ): Promise<User> {
+    return await this.usersService.updateUser(req.user.id, updateUserDto);
   }
 
   @Delete(':id')

@@ -34,12 +34,12 @@ export class WishesService {
     });
   }
 
-  async findOne(id: number) {
+  async getWishById(id: number) {
     const wish = await this.wishesRepository.findOne({
       where: { id },
-      relations: ['owner', 'offers', 'offers.user'],
+      relations: ['owner'],
     });
-    console.log(wish);
+
     if (!wish) {
       throw new NotFoundException('Некорректные данные');
     }
@@ -47,11 +47,28 @@ export class WishesService {
     return wish;
   }
 
+  async getWishInfo(userId: number, id: number) {
+    const wish = await this.wishesRepository.findOne({
+      where: { id },
+      relations: ['owner', 'offers', 'offers.user'],
+    });
+
+    if (!wish) {
+      throw new NotFoundException('Некорректные данные');
+    }
+
+    if (userId === wish.owner.id) {
+      return wish;
+    } else {
+      const filteredOffers = wish.offers.filter((offer) => !offer.hidden);
+      wish.offers = filteredOffers;
+      return wish;
+    }
+  }
+
   async findLastWishes() {
     const wishes = await this.wishesRepository.find({
-      relations: {
-        owner: true,
-      },
+      relations: ['owner'],
       order: {
         createdAt: 'DESC',
       },
@@ -67,9 +84,7 @@ export class WishesService {
 
   async findTopWishes() {
     const wishes = await this.wishesRepository.find({
-      relations: {
-        owner: true,
-      },
+      relations: ['owner'],
       order: {
         copied: 'DESC',
       },
@@ -94,7 +109,7 @@ export class WishesService {
   }
 
   async copyWishToUser(wishId: number, userId: number): Promise<Wish> {
-    const wishToCopy = await this.findOne(wishId);
+    const wishToCopy = await this.getWishById(wishId);
     const user = await this.usersRepository.findOne({ where: { id: userId } });
 
     if (!wishToCopy) {
@@ -125,7 +140,7 @@ export class WishesService {
     updateWishDto: UpdateWishDto,
     userId: number,
   ): Promise<void> {
-    const wish = await this.findOne(id);
+    const wish = await this.getWishById(id);
 
     if (!wish) {
       throw new NotFoundException('Такого подарка не существует');
@@ -145,7 +160,7 @@ export class WishesService {
   }
 
   async removeOne(wishId: number, userId: number): Promise<void> {
-    const wish = await this.findOne(wishId);
+    const wish = await this.getWishById(wishId);
 
     if (userId !== wish.owner.id) {
       throw new NotFoundException('Вы можете удалять только свои подарки');

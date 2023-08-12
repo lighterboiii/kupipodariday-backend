@@ -33,8 +33,8 @@ export class WishlistsController {
   }
 
   @Get(':id')
-  async findOneById(@Param('id') id: string): Promise<WishList> {
-    const wishList = this.wishListsService.findOne(Number(id));
+  async findOneById(@Param('id') id: number): Promise<WishList> {
+    const wishList = this.wishListsService.findOne(id);
 
     if (!wishList) {
       throw new NotFoundException('Вишлист не найден');
