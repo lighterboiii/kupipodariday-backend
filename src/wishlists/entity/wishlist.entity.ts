@@ -1,4 +1,11 @@
-import { IsDate, Max, Length, IsUrl } from 'class-validator';
+import {
+  IsDate,
+  Max,
+  Length,
+  IsUrl,
+  IsNumber,
+  IsString,
+} from 'class-validator';
 import { User } from 'src/users/entity/user.entity';
 import { Wish } from 'src/wishes/entity/wish.entity';
 import {
@@ -15,6 +22,7 @@ import {
 @Entity()
 export class WishList {
   @PrimaryGeneratedColumn()
+  @IsNumber()
   id: number;
 
   @CreateDateColumn()
@@ -27,10 +35,12 @@ export class WishList {
 
   @Column()
   @Length(1, 250)
+  @IsString()
   name: string;
 
-  @Column()
+  @Column({ default: '' })
   @Max(1500)
+  @IsString()
   description: string;
 
   @Column()

@@ -1,4 +1,4 @@
-import { IsDate, IsNumber, IsUrl, Length } from 'class-validator';
+import { IsDate, IsNumber, IsString, IsUrl, Length } from 'class-validator';
 import { Offer } from 'src/offers/entity/offer.entity';
 import { User } from 'src/users/entity/user.entity';
 import {
@@ -14,6 +14,7 @@ import {
 @Entity()
 export class Wish {
   @PrimaryGeneratedColumn()
+  @IsNumber()
   id: number;
 
   @CreateDateColumn()
@@ -26,9 +27,11 @@ export class Wish {
 
   @Column()
   @Length(1, 250)
+  @IsString()
   name: string;
 
   @Column()
+  @IsString()
   link: string;
 
   @Column()
@@ -48,8 +51,9 @@ export class Wish {
   @IsNumber()
   raised: number;
 
-  @Column()
+  @Column({ default: '' })
   @Length(1, 1024)
+  @IsString()
   description: string;
 
   @ManyToOne(() => User, (user) => user.wishes)

@@ -1,7 +1,7 @@
 import {
   BadRequestException,
   Injectable,
-  NotFoundException,
+  // NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entity/user.entity';
@@ -18,11 +18,15 @@ export class UsersService {
     private readonly hashService: HashService,
   ) {}
 
-  async createUser(createUserDto: CreateUserDto): Promise<User> {
-    return this.usersRepository.save({
-      ...createUserDto,
-      password: await this.hashService.hashPassword(createUserDto.password),
-    });
+  async createUser(createUserDto: CreateUserDto) {
+    try {
+      const userWithHash = await this.hashService.getUserData<CreateUserDto>(
+        createUserDto,
+      );
+      return await this.usersRepository.save(userWithHash);
+    } catch (err) {
+      console.log(err);
+    }
   }
 
   async findByUsername(username: string): Promise<User> {
@@ -55,18 +59,10 @@ export class UsersService {
       ? await this.findByEmail(query)
       : await this.findByUsername(query);
 
-    if (!user) return null;
-
-    return [user];
-  }
-
-  async removeById(id: number): Promise<void> {
-    const user = await this.findById(id);
-
     if (!user) {
-      throw new NotFoundException(`Ошибка. Пользователь не найден`);
+      throw new Error(`Пользователь ${query} не найден`);
     }
 
-    await this.usersRepository.delete(id);
+    return [user];
   }
 }

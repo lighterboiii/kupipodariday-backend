@@ -60,10 +60,6 @@ export class OffersService {
     return createdOffer;
   }
 
-  async findAll(): Promise<Offer[]> {
-    return await this.offersRepository.find();
-  }
-
   async findOne(id: number): Promise<Offer> {
     return await this.offersRepository.findOne({
       where: { id: id },

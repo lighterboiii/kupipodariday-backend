@@ -4,7 +4,7 @@ import {
   NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
-import { Repository } from 'typeorm';
+import { Repository, In } from 'typeorm';
 import { Wish } from './entity/wish.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CreateWishDto } from './dto/createWish.dto';
@@ -99,16 +99,21 @@ export class WishesService {
   }
 
   async findUserWishes(id: number) {
-    return await this.wishesRepository.find({
-      where: {
-        owner: {
-          id,
-        },
-      },
+    const { wishes } = await this.usersRepository.findOne({
+      where: { id: id },
+      relations: ['wishes', 'wishes.owner', 'wishes.offers'],
     });
+    return wishes;
+    // return await this.wishesRepository.find({
+    //   where: {
+    //     owner: {
+    //       id,
+    //     },
+    //   },
+    // });
   }
 
-  async copyWishToUser(wishId: number, userId: number): Promise<Wish> {
+  async copyWishToUser(userId: number, wishId: number): Promise<Wish> {
     const wishToCopy = await this.getWishById(wishId);
     const user = await this.usersRepository.findOne({ where: { id: userId } });
 
@@ -135,29 +140,29 @@ export class WishesService {
     return newWish;
   }
 
-  async updateWish(
-    id: number,
-    updateWishDto: UpdateWishDto,
-    userId: number,
-  ): Promise<void> {
-    const wish = await this.getWishById(id);
+  // async updateWish(
+  //   id: number,
+  //   updateWishDto: UpdateWishDto,
+  //   userId: number,
+  // ): Promise<void> {
+  //   const wish = await this.getWishById(id);
 
-    if (!wish) {
-      throw new NotFoundException('Такого подарка не существует');
-    }
+  //   if (!wish) {
+  //     throw new NotFoundException('Такого подарка не существует');
+  //   }
 
-    if (wish.raised > 0) {
-      throw new BadRequestException(
-        'Нельзя изменить описание подарка после начала сбора средств',
-      );
-    }
+  //   if (wish.raised > 0) {
+  //     throw new BadRequestException(
+  //       'Нельзя изменить описание подарка после начала сбора средств',
+  //     );
+  //   }
 
-    if (wish.owner.id !== userId) {
-      throw new UnauthorizedException('Ошибка доступа');
-    }
+  //   if (wish.owner.id !== userId) {
+  //     throw new UnauthorizedException('Ошибка доступа');
+  //   }
 
-    await this.wishesRepository.update(id, updateWishDto);
-  }
+  //   await this.wishesRepository.update(id, updateWishDto);
+  // }
 
   async removeOne(wishId: number, userId: number): Promise<void> {
     const wish = await this.getWishById(wishId);

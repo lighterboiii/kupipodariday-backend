@@ -6,7 +6,6 @@ import {
   Patch,
   Param,
   NotFoundException,
-  Delete,
   UseGuards,
   Post,
 } from '@nestjs/common';
@@ -62,7 +61,7 @@ export class UsersController {
   @Get(':username/wishes')
   async getUserWishes(@Param('username') username: string) {
     const { id } = await this.usersService.findByUsername(username);
-    return await this.wishesService.findUserWishes(+id);
+    return await this.wishesService.findUserWishes(id);
   }
 
   @Patch('me')
@@ -71,10 +70,5 @@ export class UsersController {
     @Body() updateUserDto: UpdateUserDto,
   ): Promise<User> {
     return await this.usersService.updateUser(req.user.id, updateUserDto);
-  }
-
-  @Delete(':id')
-  async removeById(@Param('id') id: number): Promise<void> {
-    await this.usersService.removeById(id);
   }
 }

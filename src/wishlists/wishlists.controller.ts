@@ -14,10 +14,19 @@ import { WishList } from './entity/wishlist.entity';
 import { CreateWishlistDto } from './dto/createWishlist.dto';
 import { User } from 'src/users/entity/user.entity';
 import { UpdateWishlistDto } from './dto/updateWishlist.dto';
+import { Repository, In } from 'typeorm';
+import { Wish } from 'src/wishes/entity/wish.entity';
+import { InjectRepository } from '@nestjs/typeorm';
 
 @Controller('wishlistlists')
 export class WishlistsController {
-  constructor(private readonly wishListsService: WishlistsService) {}
+  constructor(
+    @InjectRepository(WishList)
+    private wishlistsRepository: Repository<WishList>,
+    private readonly wishListsService: WishlistsService,
+    @InjectRepository(Wish)
+    private readonly wishesRepository: Repository<Wish>,
+  ) {}
 
   @Get()
   async getAllWishes(): Promise<WishList[]> {
@@ -25,11 +34,19 @@ export class WishlistsController {
   }
 
   @Post()
-  async createWishList(
-    @Req() user: User,
-    @Body() createWishlistDto: CreateWishlistDto,
+  async create(
+    user: User,
+    createWishlistDto: CreateWishlistDto,
   ): Promise<WishList> {
-    return this.wishListsService.createWishlist(user, createWishlistDto);
+    const items = await this.wishesRepository.find({
+      where: { id: In(createWishlistDto.itemsId) },
+    });
+    const wishlist = this.wishlistsRepository.create({
+      user,
+      ...createWishlistDto,
+      items,
+    });
+    return this.wishlistsRepository.save(wishlist);
   }
 
   @Get(':id')
