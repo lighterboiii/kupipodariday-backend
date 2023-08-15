@@ -1,14 +1,8 @@
-import {
-  BadRequestException,
-  Injectable,
-  NotFoundException,
-  UnauthorizedException,
-} from '@nestjs/common';
-import { Repository, In } from 'typeorm';
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { Repository } from 'typeorm';
 import { Wish } from './entity/wish.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CreateWishDto } from './dto/createWish.dto';
-import { UpdateWishDto } from './dto/updateWish.dto';
 import { User } from 'src/users/entity/user.entity';
 import { UsersService } from 'src/users/users.service';
 
@@ -96,21 +90,6 @@ export class WishesService {
     }
 
     return wishes;
-  }
-
-  async findUserWishes(id: number) {
-    const { wishes } = await this.usersRepository.findOne({
-      where: { id: id },
-      relations: ['wishes', 'wishes.owner', 'wishes.offers'],
-    });
-    return wishes;
-    // return await this.wishesRepository.find({
-    //   where: {
-    //     owner: {
-    //       id,
-    //     },
-    //   },
-    // });
   }
 
   async copyWishToUser(userId: number, wishId: number): Promise<Wish> {

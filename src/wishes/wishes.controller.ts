@@ -5,14 +5,12 @@ import {
   Post,
   Body,
   Param,
-  Patch,
   Delete,
   UseGuards,
 } from '@nestjs/common';
 import { WishesService } from './wishes.service';
 import { Wish } from './entity/wish.entity';
 import { CreateWishDto } from './dto/createWish.dto';
-import { UpdateWishDto } from './dto/updateWish.dto';
 import { JwtGuard } from 'src/auth/guards/auth.guard';
 
 @Controller('wishes')

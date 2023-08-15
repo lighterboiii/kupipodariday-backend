@@ -9,7 +9,6 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   OneToMany,
-  ManyToOne,
 } from 'typeorm';
 
 @Entity()
@@ -51,6 +50,6 @@ export class User {
   @OneToMany(() => Offer, (offer) => offer.user)
   offers: Offer[];
 
-  @ManyToOne(() => WishList, (wishlist) => wishlist.user)
+  @OneToMany(() => WishList, (wishlist) => wishlist.user)
   wishlists: WishList[];
 }

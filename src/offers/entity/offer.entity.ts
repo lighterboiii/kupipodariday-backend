@@ -24,12 +24,6 @@ export class Offer {
   @IsDate()
   updatedAt: Date;
 
-  @ManyToOne(() => User, (user) => user.offers)
-  user: User;
-
-  @OneToMany(() => Wish, (wish) => wish.offers)
-  item: Wish;
-
   @Column()
   @IsNumber()
   amount: number;
@@ -37,4 +31,10 @@ export class Offer {
   @Column({ default: false })
   @IsBoolean()
   hidden: boolean;
+
+  @ManyToOne(() => User, (user) => user.offers)
+  user: User;
+
+  @ManyToOne(() => Wish, (wish) => wish.offers)
+  item: Wish;
 }

@@ -1,11 +1,4 @@
-import {
-  IsDate,
-  Max,
-  Length,
-  IsUrl,
-  IsNumber,
-  IsString,
-} from 'class-validator';
+import { IsDate, Length, IsUrl, IsNumber, IsString } from 'class-validator';
 import { User } from 'src/users/entity/user.entity';
 import { Wish } from 'src/wishes/entity/wish.entity';
 import {
@@ -38,16 +31,11 @@ export class WishList {
   @IsString()
   name: string;
 
-  @Column({ default: '' })
-  @Max(1500)
-  @IsString()
-  description: string;
-
   @Column()
   @IsUrl()
   image: string;
 
-  @ManyToMany(() => Wish)
+  @ManyToMany(() => Wish, (wish) => wish.name)
   @JoinTable()
   items: Wish[];
 

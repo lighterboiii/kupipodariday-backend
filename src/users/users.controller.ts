@@ -15,6 +15,7 @@ import { UpdateUserDto } from './dto/updateUser.dto';
 import { JwtGuard } from 'src/auth/guards/auth.guard';
 import { WishesService } from 'src/wishes/wishes.service';
 import { Wish } from 'src/wishes/entity/wish.entity';
+import { UserWishesDto } from './dto/user-wishes.dto';
 
 @UseGuards(JwtGuard)
 @Controller('users')
@@ -36,9 +37,13 @@ export class UsersController {
   }
 
   @Get('me/wishes')
-  async findMyWishes(@Req() req): Promise<Wish[]> {
-    return await this.wishesService.findUserWishes(req.user.id);
+  async findCurrentUserWishes(@Req() { user: { id } }): Promise<Wish[]> {
+    const relations = ['wishes', 'wishes.owner', 'wishes.offers'];
+    return await this.usersService.findWishes(id, relations);
   }
+  // async findMyWishes(@Req() req): Promise<Wish[]> {
+  //   return await this.wishesService.findUserWishes(req.user.id);
+  // }
 
   @Post('find')
   async findByQuery(@Body('query') query: string): Promise<User[]> {
@@ -59,10 +64,17 @@ export class UsersController {
   }
 
   @Get(':username/wishes')
-  async getUserWishes(@Param('username') username: string) {
+  async findUserWishes(
+    @Param('username') username: string,
+  ): Promise<UserWishesDto[]> {
     const { id } = await this.usersService.findByUsername(username);
-    return await this.wishesService.findUserWishes(id);
+    const relations = ['wishes', 'wishes.owner', 'wishes.offers'];
+    return await this.usersService.findWishes(id, relations);
   }
+  // async getUserWishes(@Param('username') username: string) {
+  //   const { id } = await this.usersService.findByUsername(username);
+  //   return await this.wishesService.findUserWishes(id);
+  // }
 
   @Patch('me')
   async updateUserData(
