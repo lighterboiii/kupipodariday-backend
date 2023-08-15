@@ -119,6 +119,18 @@ export class WishesService {
     return newWish;
   }
 
+  async getWishListByIds(ids: number[]): Promise<Wish[]> {
+    const wishes = await this.wishesRepository
+      .createQueryBuilder('item')
+      .where('item.id IN (:...ids)', { ids })
+      .getMany();
+
+    if (!wishes) {
+      throw new NotFoundException('Такого подарка не найдено');
+    }
+    return wishes;
+  }
+
   // async updateWish(
   //   id: number,
   //   updateWishDto: UpdateWishDto,
