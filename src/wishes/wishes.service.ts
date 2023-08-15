@@ -1,5 +1,9 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
-import { Repository } from 'typeorm';
+import {
+  ForbiddenException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
+import { Repository, DataSource } from 'typeorm';
 import { Wish } from './entity/wish.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CreateWishDto } from './dto/createWish.dto';
@@ -14,6 +18,7 @@ export class WishesService {
     @InjectRepository(User)
     private readonly usersRepository: Repository<User>,
     private readonly usersService: UsersService,
+    private readonly dataSource: DataSource,
   ) {}
 
   async createWish(
@@ -92,31 +97,24 @@ export class WishesService {
     return wishes;
   }
 
-  async copyWishToUser(userId: number, wishId: number): Promise<Wish> {
-    const wishToCopy = await this.getWishById(wishId);
-    const user = await this.usersRepository.findOne({ where: { id: userId } });
-
-    if (!wishToCopy) {
-      throw new NotFoundException('Такого подарка не существует');
+  async copyWish(userId: number, wishId: number) {
+    const queryRunner = this.dataSource.createQueryRunner();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+    try {
+      const { id, createdAt, updatedAt, owner, ...wish } =
+        await this.getWishById(wishId);
+      const copiedWish = await this.createWish(userId, wish);
+      await this.wishesRepository.update(wishId, {
+        copied: copiedWish.copied + 1,
+      });
+      await queryRunner.commitTransaction();
+      return copiedWish;
+    } catch (err) {
+      await queryRunner.rollbackTransaction();
+    } finally {
+      await queryRunner.release();
     }
-
-    if (!user) {
-      throw new NotFoundException('Пользователь не найден');
-    }
-
-    const copiedWish = {
-      name: wishToCopy.name,
-      link: wishToCopy.link,
-      image: wishToCopy.image,
-      price: wishToCopy.price,
-    };
-    wishToCopy.copied += 1;
-
-    const newWish = await this.createWish(user.id, copiedWish);
-    await this.wishesRepository.save(wishToCopy);
-    await this.wishesRepository.save(newWish);
-
-    return newWish;
   }
 
   async getWishListByIds(ids: number[]): Promise<Wish[]> {
@@ -131,29 +129,25 @@ export class WishesService {
     return wishes;
   }
 
-  // async updateWish(
-  //   id: number,
-  //   updateWishDto: UpdateWishDto,
-  //   userId: number,
-  // ): Promise<void> {
-  //   const wish = await this.getWishById(id);
+  async update(userId: number, wishId: number, updateData: any) {
+    const wish = await this.getWishById(wishId);
 
-  //   if (!wish) {
-  //     throw new NotFoundException('Такого подарка не существует');
-  //   }
+    if (updateData.hasOwnProperty('price') && wish.raised > 0) {
+      throw new ForbiddenException(
+        'Нельзя обновить стоимость после начала сбора средств',
+      );
+    }
 
-  //   if (wish.raised > 0) {
-  //     throw new BadRequestException(
-  //       'Нельзя изменить описание подарка после начала сбора средств',
-  //     );
-  //   }
+    if (userId !== wish.owner.id) {
+      throw new ForbiddenException('Изменять можно только свой подарок');
+    }
 
-  //   if (wish.owner.id !== userId) {
-  //     throw new UnauthorizedException('Ошибка доступа');
-  //   }
+    const updatedWish = await this.wishesRepository.update(wishId, updateData);
 
-  //   await this.wishesRepository.update(id, updateWishDto);
-  // }
+    if (updatedWish.affected === 0) {
+      throw new Error('Ошибка обновления');
+    }
+  }
 
   async removeOne(wishId: number, userId: number): Promise<void> {
     const wish = await this.getWishById(wishId);

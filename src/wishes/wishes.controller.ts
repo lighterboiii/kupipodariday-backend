@@ -48,19 +48,9 @@ export class WishesController {
 
   @UseGuards(JwtGuard)
   @Post(':id/copy')
-  async copyWish(@Req() { user: { id } }, @Param(':id') wishId: string) {
-    return await this.wishesService.copyWishToUser(+wishId, id);
+  async copyWish(@Req() { user: { id } }, @Param(':id') wishId: number) {
+    return await this.wishesService.copyWish(id, wishId);
   }
-
-  // @UseGuards(JwtGuard)
-  // @Patch(':id')
-  // async updateWish(
-  //   @Param(':id') wishId: string,
-  //   @Body() updateWishDto: UpdateWishDto,
-  //   @Req() { user: { id } },
-  // ): Promise<void> {
-  //   return await this.wishesService.updateWish(+wishId, updateWishDto, id);
-  // }
 
   @UseGuards(JwtGuard)
   @Delete(':id')
