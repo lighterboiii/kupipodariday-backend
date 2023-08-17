@@ -102,6 +102,7 @@ export class WishesService {
     await queryRunner.connect();
     await queryRunner.startTransaction();
     try {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { id, createdAt, updatedAt, owner, ...wish } =
         await this.getWishById(wishId);
       const copiedWish = await this.createWish(userId, wish);
@@ -145,6 +146,14 @@ export class WishesService {
     const updatedWish = await this.wishesRepository.update(wishId, updateData);
 
     if (updatedWish.affected === 0) {
+      throw new Error('Ошибка обновления');
+    }
+  }
+
+  async updateRaised(id: number, updateData: any) {
+    const wish = await this.wishesRepository.update(id, updateData);
+
+    if (wish.affected === 0) {
       throw new Error('Ошибка обновления');
     }
   }
