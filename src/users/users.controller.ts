@@ -5,7 +5,6 @@ import {
   Body,
   Patch,
   Param,
-  NotFoundException,
   UseGuards,
   Post,
 } from '@nestjs/common';
@@ -16,6 +15,8 @@ import { JwtGuard } from 'src/auth/guards/auth.guard';
 import { WishesService } from 'src/wishes/wishes.service';
 import { Wish } from 'src/wishes/entity/wish.entity';
 import { UserWishesDto } from './dto/user-wishes.dto';
+import { ServerException } from 'src/exceptions/server.exception';
+import { ErrorCode } from 'src/exceptions/error-codes';
 
 @UseGuards(JwtGuard)
 @Controller('users')
@@ -30,7 +31,7 @@ export class UsersController {
     const currentUser = await this.usersService.findById(req.user.id);
 
     if (!currentUser) {
-      throw new NotFoundException('Пользователь не найден');
+      throw new ServerException(ErrorCode.UserNotFound);
     }
 
     return currentUser;
@@ -41,9 +42,6 @@ export class UsersController {
     const relations = ['wishes', 'wishes.owner', 'wishes.offers'];
     return await this.usersService.findWishes(id, relations);
   }
-  // async findMyWishes(@Req() req): Promise<Wish[]> {
-  //   return await this.wishesService.findUserWishes(req.user.id);
-  // }
 
   @Post('find')
   async findByQuery(@Body('query') query: string): Promise<User[]> {
@@ -57,7 +55,7 @@ export class UsersController {
     const userData = await this.usersService.findByUsername(username);
 
     if (!userData) {
-      throw new NotFoundException('Пользователь не найден');
+      throw new ServerException(ErrorCode.UserNotFound);
     }
 
     return userData;
@@ -71,10 +69,6 @@ export class UsersController {
     const relations = ['wishes', 'wishes.owner', 'wishes.offers'];
     return await this.usersService.findWishes(id, relations);
   }
-  // async getUserWishes(@Param('username') username: string) {
-  //   const { id } = await this.usersService.findByUsername(username);
-  //   return await this.wishesService.findUserWishes(id);
-  // }
 
   @Patch('me')
   async updateUserData(

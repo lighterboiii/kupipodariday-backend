@@ -1,10 +1,12 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entity/user.entity';
-import { Repository } from 'typeorm';
+import { Repository, QueryFailedError } from 'typeorm';
 import { CreateUserDto } from './dto/createUser.dto';
 import { UpdateUserDto } from './dto/updateUser.dto';
 import { HashService } from 'src/hash/hash.service';
+import { ErrorCode } from 'src/exceptions/error-codes';
+import { ServerException } from 'src/exceptions/server.exception';
 
 @Injectable()
 export class UsersService {
@@ -21,7 +23,9 @@ export class UsersService {
       );
       return await this.usersRepository.save(userWithHash);
     } catch (err) {
-      console.log(err);
+      if (err instanceof QueryFailedError) {
+        throw new ServerException(ErrorCode.UserAlreadyExists);
+      }
     }
   }
 
@@ -43,7 +47,7 @@ export class UsersService {
       : updateUserDto;
     const user = await this.usersRepository.update(id, newUserData);
     if (user.affected === 0) {
-      throw new BadRequestException('Ошибка');
+      throw new ServerException(ErrorCode.UpdateError);
     }
     return this.findById(id);
   }
@@ -56,7 +60,7 @@ export class UsersService {
       : await this.findByUsername(query);
 
     if (!user) {
-      throw new Error(`Пользователь ${query} не найден`);
+      throw new ServerException(ErrorCode.UserNotFound);
     }
 
     return [user];
@@ -68,7 +72,9 @@ export class UsersService {
       relations,
     });
 
-    if (!wishes) return null;
+    if (!wishes) {
+      throw new ServerException(ErrorCode.WishNotFound);
+    }
 
     return wishes;
   }

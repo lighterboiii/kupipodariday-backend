@@ -1,12 +1,4 @@
-import {
-  Body,
-  Controller,
-  Get,
-  Post,
-  Req,
-  Param,
-  NotFoundException,
-} from '@nestjs/common';
+import { Body, Controller, Get, Post, Req, Param } from '@nestjs/common';
 import { WishList } from './entity/wishlist.entity';
 import { CreateWishlistDto } from './dto/createWishlist.dto';
 import { Repository } from 'typeorm';
@@ -36,12 +28,6 @@ export class WishlistsController {
 
   @Get(':id')
   async findOneById(@Param('id') id: number): Promise<WishList> {
-    const wishList = this.wishlistsService.findOne(id);
-
-    if (!wishList) {
-      throw new NotFoundException('Вишлист не найден');
-    }
-
-    return wishList;
+    return this.wishlistsService.findOne(id);
   }
 }

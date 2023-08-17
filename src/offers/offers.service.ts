@@ -1,10 +1,12 @@
-import { ForbiddenException, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, DataSource } from 'typeorm';
 import { Offer } from './entity/offer.entity';
 import { CreateOfferDto } from './dto/createOffer.dto';
 import { WishesService } from 'src/wishes/wishes.service';
 import { UsersService } from 'src/users/users.service';
+import { ServerException } from 'src/exceptions/server.exception';
+import { ErrorCode } from 'src/exceptions/error-codes';
 
 @Injectable()
 export class OffersService {
@@ -23,9 +25,7 @@ export class OffersService {
     try {
       const wish = await this.wishesService.getWishById(createOfferDto.wishId);
       if (userId === wish.owner.id) {
-        throw new ForbiddenException(
-          'Нельзя участвовать в сборе на свои подарки',
-        );
+        throw new ServerException(ErrorCode.OfferForbidden);
       }
 
       const user = await this.usersService.findById(wish.owner.id);
@@ -34,7 +34,7 @@ export class OffersService {
       );
 
       if (raisedSum > wish.price) {
-        throw new Error('Достигнута максимальная сумма сбора');
+        throw new ServerException(ErrorCode.RaisedForbidden);
       }
 
       await this.wishesService.updateRaised(createOfferDto.wishId, {

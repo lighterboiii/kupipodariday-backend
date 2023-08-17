@@ -1,14 +1,12 @@
-import {
-  ForbiddenException,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { WishList } from './entity/wishlist.entity';
 import { CreateWishlistDto } from './dto/createWishlist.dto';
 import { Repository, DataSource } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { WishesService } from 'src/wishes/wishes.service';
 import { UsersService } from 'src/users/users.service';
+import { ServerException } from 'src/exceptions/server.exception';
+import { ErrorCode } from 'src/exceptions/error-codes';
 
 @Injectable()
 export class WishlistsService {
@@ -26,7 +24,7 @@ export class WishlistsService {
     });
 
     if (!wishlists) {
-      throw new NotFoundException('Вишлист не найден');
+      throw new ServerException(ErrorCode.WishlistNotFound);
     }
 
     return wishlists;
@@ -63,7 +61,7 @@ export class WishlistsService {
     });
 
     if (!wishlist) {
-      throw new NotFoundException('Вишлист не найден');
+      throw new ServerException(ErrorCode.WishlistNotFound);
     }
 
     return wishlist;
@@ -73,7 +71,7 @@ export class WishlistsService {
     const wishlist = await this.findOne(wishListId);
 
     if (userId !== wishlist.owner.id) {
-      throw new ForbiddenException('Удалять можно только свои коллекции');
+      throw new ServerException(ErrorCode.WishlistNotFound);
     }
 
     return await this.wishlistsRepository.delete(wishListId);

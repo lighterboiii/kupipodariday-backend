@@ -1,14 +1,12 @@
-import {
-  ForbiddenException,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { Repository, DataSource } from 'typeorm';
 import { Wish } from './entity/wish.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CreateWishDto } from './dto/createWish.dto';
 import { User } from 'src/users/entity/user.entity';
 import { UsersService } from 'src/users/users.service';
+import { ServerException } from 'src/exceptions/server.exception';
+import { ErrorCode } from 'src/exceptions/error-codes';
 
 @Injectable()
 export class WishesService {
@@ -40,7 +38,7 @@ export class WishesService {
     });
 
     if (!wish) {
-      throw new NotFoundException('Некорректные данные');
+      throw new ServerException(ErrorCode.WishNotFound);
     }
 
     return wish;
@@ -53,7 +51,7 @@ export class WishesService {
     });
 
     if (!wish) {
-      throw new NotFoundException('Некорректные данные');
+      throw new ServerException(ErrorCode.WishNotFound);
     }
 
     if (userId === wish.owner.id) {
@@ -75,7 +73,7 @@ export class WishesService {
     });
 
     if (!wishes) {
-      throw new NotFoundException('Не найдено');
+      throw new ServerException(ErrorCode.WishesNotFound);
     }
 
     return wishes;
@@ -91,7 +89,7 @@ export class WishesService {
     });
 
     if (!wishes) {
-      throw new NotFoundException('Не найдено');
+      throw new ServerException(ErrorCode.WishesNotFound);
     }
 
     return wishes;
@@ -125,7 +123,7 @@ export class WishesService {
       .getMany();
 
     if (!wishes) {
-      throw new NotFoundException('Такого подарка не найдено');
+      throw new ServerException(ErrorCode.WishesNotFound);
     }
     return wishes;
   }
@@ -134,19 +132,17 @@ export class WishesService {
     const wish = await this.getWishById(wishId);
 
     if (updateData.hasOwnProperty('price') && wish.raised > 0) {
-      throw new ForbiddenException(
-        'Нельзя обновить стоимость после начала сбора средств',
-      );
+      throw new ServerException(ErrorCode.RaisedForbidden);
     }
 
     if (userId !== wish.owner.id) {
-      throw new ForbiddenException('Изменять можно только свой подарок');
+      throw new ServerException(ErrorCode.UpdateError);
     }
 
     const updatedWish = await this.wishesRepository.update(wishId, updateData);
 
     if (updatedWish.affected === 0) {
-      throw new Error('Ошибка обновления');
+      throw new ServerException(ErrorCode.UpdateError);
     }
   }
 
@@ -154,7 +150,7 @@ export class WishesService {
     const wish = await this.wishesRepository.update(id, updateData);
 
     if (wish.affected === 0) {
-      throw new Error('Ошибка обновления');
+      throw new ServerException(ErrorCode.RaisedForbidden);
     }
   }
 
@@ -162,7 +158,7 @@ export class WishesService {
     const wish = await this.getWishById(wishId);
 
     if (userId !== wish.owner.id) {
-      throw new NotFoundException('Вы можете удалять только свои подарки');
+      throw new ServerException(ErrorCode.Forbidden);
     }
 
     await this.wishesRepository.delete(wishId);
