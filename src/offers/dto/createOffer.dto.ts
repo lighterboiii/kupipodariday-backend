@@ -1,7 +1,6 @@
 import { IsBoolean, IsNumber, IsOptional, Min } from 'class-validator';
-import { BaseEntity } from 'src/entities/base.entity';
 
-export class CreateOfferDto extends BaseEntity {
+export class CreateOfferDto {
   @IsNumber()
   @Min(1)
   readonly amount: number;
@@ -11,8 +10,5 @@ export class CreateOfferDto extends BaseEntity {
   readonly hidden?: boolean;
 
   @IsNumber()
-  readonly userId: number;
-
-  @IsNumber()
-  readonly wishId: number;
+  readonly itemId: number;
 }

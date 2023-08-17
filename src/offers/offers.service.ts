@@ -23,7 +23,7 @@ export class OffersService {
     await queryRunner.connect();
     await queryRunner.startTransaction();
     try {
-      const wish = await this.wishesService.getWishById(createOfferDto.wishId);
+      const wish = await this.wishesService.getWishById(createOfferDto.itemId);
       if (userId === wish.owner.id) {
         throw new ServerException(ErrorCode.OfferForbidden);
       }
@@ -37,7 +37,7 @@ export class OffersService {
         throw new ServerException(ErrorCode.RaisedForbidden);
       }
 
-      await this.wishesService.updateRaised(createOfferDto.wishId, {
+      await this.wishesService.updateRaised(createOfferDto.itemId, {
         raised: raisedSum,
       });
 
