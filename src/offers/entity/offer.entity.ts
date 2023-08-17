@@ -1,29 +1,12 @@
-import { IsBoolean, IsDate, IsNumber } from 'class-validator';
-import {
-  Column,
-  PrimaryGeneratedColumn,
-  CreateDateColumn,
-  UpdateDateColumn,
-  ManyToOne,
-  Entity,
-} from 'typeorm';
+import { IsBoolean, IsNumber } from 'class-validator';
+import { Column, ManyToOne, Entity } from 'typeorm';
 import { User } from 'src/users/entity/user.entity';
 import { Wish } from 'src/wishes/entity/wish.entity';
+import { BaseEntity } from 'src/entities/base.entity';
 
 @Entity()
-export class Offer {
-  @PrimaryGeneratedColumn()
-  id: number;
-
-  @CreateDateColumn()
-  @IsDate()
-  createdAt: Date;
-
-  @UpdateDateColumn()
-  @IsDate()
-  updatedAt: Date;
-
-  @Column()
+export class Offer extends BaseEntity {
+  @Column({ type: 'decimal', precision: 10, scale: 2, default: 0 })
   @IsNumber()
   amount: number;
 

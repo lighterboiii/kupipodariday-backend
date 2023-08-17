@@ -1,31 +1,11 @@
-import { IsDate, Length, IsUrl, IsNumber, IsString } from 'class-validator';
+import { Length, IsUrl, IsString } from 'class-validator';
+import { BaseEntity } from 'src/entities/base.entity';
 import { User } from 'src/users/entity/user.entity';
 import { Wish } from 'src/wishes/entity/wish.entity';
-import {
-  Entity,
-  Column,
-  PrimaryGeneratedColumn,
-  CreateDateColumn,
-  UpdateDateColumn,
-  ManyToOne,
-  ManyToMany,
-  JoinTable,
-} from 'typeorm';
+import { Entity, Column, ManyToOne, ManyToMany, JoinTable } from 'typeorm';
 
 @Entity()
-export class WishList {
-  @PrimaryGeneratedColumn()
-  @IsNumber()
-  id: number;
-
-  @CreateDateColumn()
-  @IsDate()
-  createdAt: Date;
-
-  @UpdateDateColumn()
-  @IsDate()
-  updatedAt: Date;
-
+export class WishList extends BaseEntity {
   @Column()
   @Length(1, 250)
   @IsString()

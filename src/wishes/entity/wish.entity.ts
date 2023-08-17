@@ -1,54 +1,30 @@
-import { IsDate, IsNumber, IsString, IsUrl, Length } from 'class-validator';
+import { IsNumber, IsString, IsUrl, Length } from 'class-validator';
+import { BaseEntity } from 'src/entities/base.entity';
 import { Offer } from 'src/offers/entity/offer.entity';
 import { User } from 'src/users/entity/user.entity';
-import {
-  Column,
-  PrimaryGeneratedColumn,
-  CreateDateColumn,
-  UpdateDateColumn,
-  ManyToOne,
-  OneToMany,
-  Entity,
-} from 'typeorm';
+import { Column, ManyToOne, OneToMany, Entity } from 'typeorm';
 
 @Entity()
-export class Wish {
-  @PrimaryGeneratedColumn()
-  @IsNumber()
-  id: number;
-
-  @CreateDateColumn()
-  @IsDate()
-  createdAt: Date;
-
-  @UpdateDateColumn()
-  @IsDate()
-  updatedAt: Date;
-
+export class Wish extends BaseEntity {
   @Column()
   @Length(1, 250)
   @IsString()
   name: string;
 
   @Column()
-  @IsString()
+  @IsUrl()
   link: string;
 
   @Column()
   @IsUrl()
   image: string;
 
-  @Column()
-  @IsNumber()
+  @Column({ type: 'float' })
+  @IsNumber({ maxDecimalPlaces: 2 })
   price: number;
 
-  @Column({
-    type: 'numeric',
-    precision: 10,
-    scale: 2,
-    default: 0,
-  })
-  @IsNumber()
+  @Column({ type: 'float', default: 0 })
+  @IsNumber({ maxDecimalPlaces: 2 })
   raised: number;
 
   @Column({ default: '' })
