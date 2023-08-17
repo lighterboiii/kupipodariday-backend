@@ -15,10 +15,16 @@ import { Wish } from './wishes/entity/wish.entity';
 import { Offer } from './offers/entity/offer.entity';
 import { WinstonModule } from 'nest-winston';
 import * as winston from 'winston';
+import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
+import { APP_GUARD } from '@nestjs/core';
 
 @Module({
   imports: [
     ConfigModule.forRoot(),
+    ThrottlerModule.forRoot({
+      ttl: 60,
+      limit: 10,
+    }),
     WinstonModule.forRoot({
       levels: {
         critical_error: 0,
@@ -47,6 +53,6 @@ import * as winston from 'winston';
     JwtModule,
   ],
   controllers: [],
-  providers: [],
+  providers: [{ provide: APP_GUARD, useClass: ThrottlerGuard }],
 })
 export class AppModule {}
