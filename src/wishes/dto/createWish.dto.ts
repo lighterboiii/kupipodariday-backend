@@ -1,11 +1,4 @@
-import {
-  IsNumber,
-  IsOptional,
-  IsString,
-  IsUrl,
-  Length,
-  Max,
-} from 'class-validator';
+import { IsNumber, IsOptional, IsString, IsUrl, Length } from 'class-validator';
 
 export class CreateWishDto {
   @Length(1, 250)
@@ -21,7 +14,7 @@ export class CreateWishDto {
   price: number;
 
   @IsString()
-  @Max(1500)
+  @Length(1, 1500)
   @IsOptional()
   description?: string;
 }

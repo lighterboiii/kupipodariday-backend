@@ -1,4 +1,4 @@
-import { IsNumber, IsString, IsUrl, Length } from 'class-validator';
+import { IsNumber, IsOptional, IsString, IsUrl, Length } from 'class-validator';
 import { BaseEntity } from 'src/entities/base.entity';
 import { Offer } from 'src/offers/entity/offer.entity';
 import { User } from 'src/users/entity/user.entity';
@@ -30,6 +30,7 @@ export class Wish extends BaseEntity {
   @Column({ default: '' })
   @Length(1, 1024)
   @IsString()
+  @IsOptional()
   description: string;
 
   @ManyToOne(() => User, (user) => user.wishes)
