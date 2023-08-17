@@ -1,10 +1,19 @@
-import { Controller, Post, Body, UseGuards, Req } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Body,
+  UseGuards,
+  Req,
+  UseFilters,
+} from '@nestjs/common';
 import { UsersService } from 'src/users/users.service';
 import { AuthService } from './auth.service';
 import { CreateUserDto } from '../users/dto/createUser.dto';
 import { LocalAuthGuard } from '../auth/guards/local.guard';
 import { User } from 'src/users/entity/user.entity';
+import { InvalidDataExceptionFilter } from 'src/filters/invalid-data-exception.filter';
 
+@UseFilters(InvalidDataExceptionFilter)
 @Controller()
 export class AuthController {
   constructor(

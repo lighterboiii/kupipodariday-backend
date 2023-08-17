@@ -3,7 +3,6 @@ import { Repository, DataSource } from 'typeorm';
 import { Wish } from './entity/wish.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CreateWishDto } from './dto/createWish.dto';
-import { User } from 'src/users/entity/user.entity';
 import { UsersService } from 'src/users/users.service';
 import { ServerException } from 'src/exceptions/server.exception';
 import { ErrorCode } from 'src/exceptions/error-codes';
@@ -13,8 +12,6 @@ export class WishesService {
   constructor(
     @InjectRepository(Wish)
     private readonly wishesRepository: Repository<Wish>,
-    @InjectRepository(User)
-    private readonly usersRepository: Repository<User>,
     private readonly usersService: UsersService,
     private readonly dataSource: DataSource,
   ) {}

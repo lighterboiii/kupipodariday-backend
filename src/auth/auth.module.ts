@@ -6,8 +6,8 @@ import { UsersModule } from 'src/users/users.module';
 import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
 import { ConfigModule } from '@nestjs/config';
-import { JwtStrategy } from 'src/strategy/jwt.strategy';
-import { LocalStrategy } from 'src/strategy/local.strategy';
+import { JwtStrategy } from 'src/strategies/jwt.strategy';
+import { LocalStrategy } from 'src/strategies/local.strategy';
 import JWTConfigService from 'src/config/jwtConfig';
 
 @Module({
@@ -18,7 +18,6 @@ import JWTConfigService from 'src/config/jwtConfig';
     ConfigModule,
     JwtModule.registerAsync({
       imports: [ConfigModule],
-      // inject: [ConfigService],
       useClass: JWTConfigService,
     }),
   ],

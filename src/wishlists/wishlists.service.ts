@@ -71,7 +71,7 @@ export class WishlistsService {
     const wishlist = await this.findOne(wishListId);
 
     if (userId !== wishlist.owner.id) {
-      throw new ServerException(ErrorCode.WishlistNotFound);
+      throw new ServerException(ErrorCode.WishNotFound);
     }
 
     return await this.wishlistsRepository.delete(wishListId);

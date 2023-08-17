@@ -7,11 +7,13 @@ import {
   Param,
   Delete,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
 import { WishesService } from './wishes.service';
 import { Wish } from './entity/wish.entity';
 import { CreateWishDto } from './dto/createWish.dto';
 import { JwtGuard } from 'src/auth/guards/auth.guard';
+import { WishOwnerInterceptor } from 'src/interceptors/wish-owner.interceptor';
 
 @Controller('wishes')
 export class WishesController {
@@ -27,6 +29,7 @@ export class WishesController {
     return await this.wishesService.findLastWishes();
   }
 
+  @UseInterceptors(WishOwnerInterceptor)
   @UseGuards(JwtGuard)
   @Get(':id')
   async getWishById(
