@@ -1,7 +1,7 @@
 {
   "name": "kupipodariday",
   "version": "0.0.1",
-  "description": "",
+  "description": "Бэкенд для сервиса вишлистов kupipodariday",
   "author": "lighterboii",
   "private": true,
   "license": "UNLICENSED",

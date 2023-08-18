@@ -21,7 +21,7 @@ export const code2message = new Map<ErrorCode, string>([
   [ErrorCode.IncorrectData, 'Некорректная пара логин и пароль'],
   [ErrorCode.Forbidden, 'Можно удалять только свои подарки'],
   [ErrorCode.DeleteForbidden, 'Можно удалять только свои списки подарков'],
-  [ErrorCode.OfferForbidden, 'Можно поддержать только чужие подарки'],
+  [ErrorCode.OfferForbidden, 'Нельзя вносить деньги на свои подарки'],
   [ErrorCode.RaisedForbidden, 'Слишком большая сумма поддержки'],
   [
     ErrorCode.UserAlreadyExists,
